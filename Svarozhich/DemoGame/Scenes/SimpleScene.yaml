@@ -1,0 +1,36 @@
+Scene:
+  Name: SimpleScene
+  Entities:
+    - Id: d4805928-b87e-11f0-b39e-3bdffb7ecfbe
+      TitleComponent:
+        Title: Smooth Vase
+      PathComponent:
+        Path: "Room"
+      TransformComponent:
+        Position: [ 0.0, 0.0, 0.5 ]
+        Rotation: [ 180.0, 0.0, 0.0 ]
+        Scale: [ 2.0, 1.0, 2.0 ]
+      StaticMeshComponent:
+        MeshId: d83097b8-b87e-11f0-8139-d7163ae2e6b7
+    - Id: fb080e10-b87e-11f0-b847-1fa1ca69e34d
+      TitleComponent:
+        Title: Flat Vase
+      PathComponent:
+        Path: "Room"
+      TransformComponent:
+        Position: [ 0.0, 0.0, -0.5 ]
+        Rotation: [ 180.0, 0.0, 0.0 ]
+        Scale: [ 2.0, 1.0, 2.0 ]
+      StaticMeshComponent:
+        MeshId: ff09a9ec-b87e-11f0-ae85-4fa34db8cccb
+    - Id: 57fa3ae4-b87f-11f0-a3da-6f7cf057cd69
+      TitleComponent:
+        Title: Floor
+      PathComponent:
+        Path: "Room"
+      TransformComponent:
+        Position: [ 0.0, 0.0, 0.0 ]
+        Rotation: [ 180.0, 0.0, 0.0 ]
+        Scale: [ 3.0, 1.0, 3.0 ]
+      StaticMeshComponent:
+        MeshId: 5bf80356-b87f-11f0-a70e-fbdfecba1717

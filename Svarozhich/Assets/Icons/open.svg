@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- крышка/фронт -->
+    <path d="M3 10h18l-1.6 8.2A2 2 0 0 1 17.44 20H6.56a2 2 0 0 1-1.96-1.8L3 10z"/>
+    <!-- корпус папки -->
+    <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H8l2 2h8.5A2.5 2.5 0 0 1 21 9.5V10H3V7.5z"/>
+</svg>

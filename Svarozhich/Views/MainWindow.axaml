@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svarozhich.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        x:Class="Svarozhich.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Svarozhich" Width="1024" Height="768"
+        Opened="Window_OnOpened">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Open"/>
+                <MenuItem Header="Save"/>
+            </MenuItem>
+        </Menu>
+        <Rectangle Height="100" DockPanel.Dock="Top"/>
+        <Rectangle Height="100" DockPanel.Dock="Bottom"/>
+        
+        <TreeView DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Scene.Entities}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding SubNodes}">
+                    <TextBlock Text="{Binding Title}"></TextBlock>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        
+        <StackPanel Width="250" DockPanel.Dock="Right"/>
+        <StackPanel>
+            <TextBlock Text="Hello"></TextBlock>
+        </StackPanel>
+    </DockPanel>
+</Window>

@@ -1,0 +1,7 @@
+projectType: Third Person Project
+projectFile: project.svch
+folders:
+  - .Svarozhich
+  - Assets/Meshes
+  - Assets/Materials
+  - Scenes

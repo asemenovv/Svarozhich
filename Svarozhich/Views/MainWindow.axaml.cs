@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Controls;
-using Svarozhich.ViewModels;
+using Svarozhich.ViewModels.ProjectsExplorer;
 using Svarozhich.Views.ProjectsExplorer;
 
 namespace Svarozhich.Views;

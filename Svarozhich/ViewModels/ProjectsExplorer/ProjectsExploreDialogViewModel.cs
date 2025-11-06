@@ -1,10 +1,10 @@
 using System;
-using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Svarozhich.Messages;
 
-namespace Svarozhich.ViewModels;
+namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public partial class ProjectsExploreDialogViewModel : ViewModelBase
 {

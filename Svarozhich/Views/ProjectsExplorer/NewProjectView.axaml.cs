@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Svarozhich.ViewModels.ProjectsExplorer;
 
 namespace Svarozhich.Views.ProjectsExplorer;
 
@@ -21,4 +22,6 @@ public partial class NewProjectView : UserControl
         get => GetValue(CloseCommandProperty);
         set => SetValue(CloseCommandProperty, value);
     }
+    
+    public NewProject NewProject { get; set; } = new NewProject();
 }

@@ -6,14 +6,15 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="530"
         x:Class="Svarozhich.Views.ProjectsExplorer.ProjectsExploreDialog"
         xmlns:vm="using:Svarozhich.ViewModels"
-        x:DataType="vm:ProjectsExploreDialogViewModel"
+        xmlns:vm1="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
+        x:DataType="vm1:ProjectsExploreDialogViewModel"
         WindowStartupLocation="CenterScreen" CanResize="False"
         Title="Projects Explorer" Width="800" Height="530"
         TransparencyLevelHint="AcrylicBlur" Background="Transparent"
         ExtendClientAreaToDecorationsHint="True">
     
     <Design.DataContext>
-        <vm:ProjectsExploreDialogViewModel/>
+        <vm1:ProjectsExploreDialogViewModel/>
     </Design.DataContext>
     
     <Window.Styles>

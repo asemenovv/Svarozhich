@@ -4,16 +4,17 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using Avalonia.Media.Imaging;
+using ReactiveUI;
 using Svarozhich.Utils;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class ProjectTemplate
 {
-    public string ProjectType { get; set; }
-    public string ProjectFile { get; set; }
-    public List<string> Folders { get; set; }
-    public Bitmap PreviewImage { get; set; }
+    public required string ProjectType { get; set; }
+    public required string ProjectFile { get; set; }
+    public required List<string> Folders { get; set; }
+    public Bitmap? PreviewImage { get; set; }
 }
 
 public class NewProject : ViewModelBase
@@ -22,45 +23,26 @@ public class NewProject : ViewModelBase
         "/Users/alexeysemenov/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
 
     private string _name = "New Project";
-
     public string ProjectName
     {
         get => _name;
-        set
-        {
-            if (_name == value) return;
-            _name = value;
-            OnPropertyChanged();
-        }
+        set => this.RaiseAndSetIfChanged(ref _name, value);
     }
 
     private string _path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
-
     public string ProjectPath
     {
         get => _path;
-        set
-        {
-            if (_path == value) return;
-            _path = value;
-            OnPropertyChanged(nameof(ProjectPath));
-        }
+        set => this.RaiseAndSetIfChanged(ref _path, value);
     }
 
     private readonly ObservableCollection<ProjectTemplate> _templates = [];
     public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
-
     private ProjectTemplate? _selectedTemplate;
-
     public ProjectTemplate? SelectedTemplate
     {
         get => _selectedTemplate;
-        set
-        {
-            if (value != null && _selectedTemplate == value) return;
-            _selectedTemplate = value;
-            OnPropertyChanged(nameof(SelectedTemplate));
-        }
+        set => this.RaiseAndSetIfChanged(ref _selectedTemplate, value);
     }
 
     public NewProject()

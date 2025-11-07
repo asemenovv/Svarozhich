@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using ReactiveUI;
+using Svarozhich.Messages;
 using Svarozhich.Utils;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
@@ -17,25 +21,25 @@ public class ProjectTemplate
     public Bitmap? PreviewImage { get; set; }
 }
 
-public class NewProject : ViewModelBase
+public partial class NewProjectViewModel : ViewModelBase
 {
     private readonly string _templatePath =
         "/Users/alexeysemenov/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
-
+    
     private string _name = "New Project";
     public string ProjectName
     {
         get => _name;
         set => this.RaiseAndSetIfChanged(ref _name, value);
     }
-
+    
     private string _path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
     public string ProjectPath
     {
         get => _path;
         set => this.RaiseAndSetIfChanged(ref _path, value);
     }
-
+    
     private readonly ObservableCollection<ProjectTemplate> _templates = [];
     public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
     private ProjectTemplate? _selectedTemplate;
@@ -44,8 +48,14 @@ public class NewProject : ViewModelBase
         get => _selectedTemplate;
         set => this.RaiseAndSetIfChanged(ref _selectedTemplate, value);
     }
+    
+    public void CloseDialog()
+    {
+        Console.WriteLine("Closing dialog!!!");
+        WeakReferenceMessenger.Default.Send(new CloseProjectExploreDialogMessage());
+    }
 
-    public NewProject()
+    public NewProjectViewModel()
     {
         ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_templates);
         try

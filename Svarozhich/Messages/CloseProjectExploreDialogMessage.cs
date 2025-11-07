@@ -3,4 +3,8 @@ using Svarozhich.ViewModels.ProjectsExplorer;
 
 namespace Svarozhich.Messages;
 
-public class CloseProjectExploreDialogMessage : AsyncRequestMessage<ProjectsExploreDialogViewModel?>;
+public sealed class CloseProjectExploreDialogMessage : AsyncRequestMessage<ProjectsExploreDialogViewModel?>;
+
+public sealed class ShowOpenProjectsViewInProjectExploreDialogMessage : AsyncRequestMessage<ProjectsExploreDialogViewModel?>;
+
+public sealed class ShowCreateProjectsViewInProjectExploreDialogMessage : AsyncRequestMessage<ProjectsExploreDialogViewModel?>;

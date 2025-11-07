@@ -2,9 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:projectsExplorer="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.ProjectsExplorer.OpenProjectView"
-             x:Name="Root">
+             x:DataType="projectsExplorer:OpenProjectViewModel">
+    <UserControl.DataContext>
+        <projectsExplorer:OpenProjectViewModel/>
+    </UserControl.DataContext>
+    
     <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <ListBox Width="195" Height="354"></ListBox>
@@ -13,7 +18,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 30, 0, 0">
             <Button Content="Open" Width="96" HorizontalContentAlignment="Center" IsDefault="True"/>
             <Button Content="Exit" Width="96" HorizontalContentAlignment="Center" Margin="30, 0, 0, 0"
-                    Command="{Binding CloseCommand, ElementName=Root}"/>
+                    Command="{Binding CloseDialog}"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -11,13 +11,4 @@ public partial class OpenProjectView : UserControl
     {
         InitializeComponent();
     }
-    
-    public static readonly StyledProperty<ICommand?> CloseCommandProperty =
-        AvaloniaProperty.Register<OpenProjectView, ICommand?>(nameof(CloseCommand));
-
-    public ICommand? CloseCommand
-    {
-        get => GetValue(CloseCommandProperty);
-        set => SetValue(CloseCommandProperty, value);
-    }
 }

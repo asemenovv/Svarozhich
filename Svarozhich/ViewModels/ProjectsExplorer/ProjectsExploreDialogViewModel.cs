@@ -6,12 +6,15 @@ using Svarozhich.Messages;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
-public partial class ProjectsExploreDialogViewModel : ViewModelBase
+public class ProjectsExploreDialogViewModel : ViewModelBase
 {
-    [RelayCommand]
-    private static async Task CloseDialog()
+    public void ShowOpenProjectView()
     {
-        Console.WriteLine("Closing dialog");
-        await WeakReferenceMessenger.Default.Send(new CloseProjectExploreDialogMessage());
+        WeakReferenceMessenger.Default.Send(new ShowOpenProjectsViewInProjectExploreDialogMessage());
+    }
+    
+    public void ShowCreateProjectView()
+    {
+        WeakReferenceMessenger.Default.Send(new ShowCreateProjectsViewInProjectExploreDialogMessage());
     }
 }

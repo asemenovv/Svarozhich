@@ -5,16 +5,15 @@
         xmlns:projectsExplorer="clr-namespace:Svarozhich.Views.ProjectsExplorer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="530"
         x:Class="Svarozhich.Views.ProjectsExplorer.ProjectsExploreDialog"
-        xmlns:vm="using:Svarozhich.ViewModels"
-        xmlns:vm1="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
-        x:DataType="vm1:ProjectsExploreDialogViewModel"
+        xmlns:vm="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
+        x:DataType="vm:ProjectsExploreDialogViewModel"
         WindowStartupLocation="CenterScreen" CanResize="False"
         Title="Projects Explorer" Width="800" Height="530"
         TransparencyLevelHint="AcrylicBlur" Background="Transparent"
         ExtendClientAreaToDecorationsHint="True">
     
     <Design.DataContext>
-        <vm1:ProjectsExploreDialogViewModel/>
+        <vm:ProjectsExploreDialogViewModel/>
     </Design.DataContext>
     
     <Window.Styles>
@@ -51,23 +50,23 @@
         </ExperimentalAcrylicBorder>
         <Grid ColumnDefinitions="*" RowDefinitions="Auto, *">
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20" HorizontalAlignment="Center">
-                <ToggleButton x:Name="OpenProjectButton" IsChecked="True" Click="ProjectButton_OnClick" Margin="0">
+                <ToggleButton x:Name="OpenProjectButton" IsChecked="True" Margin="0"
+                              Command="{Binding ShowOpenProjectView}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Image Source="{SvgImage /Assets/Icons/open.svg}" />
                         <TextBlock Text="Open Project" />
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton x:Name="CreateProjectButton" IsChecked="False" Click="ProjectButton_OnClick" Margin="30 0 0 0">
+                <ToggleButton x:Name="CreateProjectButton" IsChecked="False" Margin="30 0 0 0"
+                              Command="{Binding ShowCreateProjectView}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Image Source="{SvgImage /Assets/Icons/plus.svg}" />
                         <TextBlock Text="Create Project" />
                     </StackPanel>
                 </ToggleButton>
             </StackPanel>
-            <projectsExplorer:OpenProjectView Grid.Row="1" IsVisible="True" Name="OpenProjectView"
-                                              CloseCommand="{Binding CloseDialogCommand}"/>
-            <projectsExplorer:NewProjectView Grid.Row="1" IsVisible="False" Name="CreateProjectView"
-                                             CloseCommand="{Binding CloseDialogCommand}"/>
+            <projectsExplorer:OpenProjectView Grid.Row="1" IsVisible="True" Name="OpenProjectView" />
+            <projectsExplorer:NewProjectView Grid.Row="1" IsVisible="False" Name="NewProjectView" />
         </Grid>
     </Panel>
 </Window>

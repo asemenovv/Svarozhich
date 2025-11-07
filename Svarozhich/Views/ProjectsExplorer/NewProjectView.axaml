@@ -5,12 +5,16 @@
              xmlns:vm="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.ProjectsExplorer.NewProjectView"
-             x:Name="Root">
+             x:DataType="vm:NewProjectViewModel">
+    <UserControl.DataContext>
+        <vm:NewProjectViewModel/>
+    </UserControl.DataContext>
+    
     <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <ListBox Width="195" Height="250" SelectedIndex="0"
-                     ItemsSource="{Binding NewProject.ProjectTemplates, ElementName=Root}"
-                     SelectedItem="{Binding NewProject.SelectedTemplate, ElementName=Root}">
+                     ItemsSource="{Binding ProjectTemplates}"
+                     SelectedItem="{Binding SelectedTemplate}">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="vm:ProjectTemplate">
                         <TextBlock Text="{Binding ProjectType}"/>
@@ -18,17 +22,17 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             <Image Width="400" Height="250"
-                   Source="{Binding NewProject.SelectedTemplate.PreviewImage, ElementName=Root, FallbackValue=''}"/>
+                   Source="{Binding SelectedTemplate.PreviewImage, FallbackValue=''}"/>
         </StackPanel>
         <Grid ColumnDefinitions="100, 550" RowDefinitions="Auto, Auto" HorizontalAlignment="Center"
               Margin="0, 30, 0, 0">
             <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Name</Label>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NewProject.ProjectName, ElementName=Root}"></TextBox>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ProjectName}"></TextBox>
             <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Margin="0, 10, 0, 0">Path</Label>
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Stretch"
                         Margin="0, 10, 0, 0">
-                <TextBox Width="475" Text="{Binding NewProject.ProjectPath, ElementName=Root}"></TextBox>
+                <TextBox Width="475" Text="{Binding ProjectPath}"></TextBox>
                 <Button Content="Browse" Width="70" Margin="5, 0, 0, 0" Height="32"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                 </Button>
@@ -37,7 +41,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 30, 0, 0">
             <Button Content="Create" Width="96" HorizontalContentAlignment="Center" IsDefault="True" />
             <Button Content="Exit" Width="96" HorizontalContentAlignment="Center" Margin="30, 0, 0, 0"
-                    Command="{Binding CloseCommand, ElementName=Root}" />
+                    Command="{Binding CloseDialog}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

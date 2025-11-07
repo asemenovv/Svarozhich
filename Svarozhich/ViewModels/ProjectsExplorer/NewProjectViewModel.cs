@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
 using Svarozhich.Messages;
 using Svarozhich.Utils;
 
@@ -51,13 +55,31 @@ public partial class NewProjectViewModel : ViewModelBase
     
     public void CloseDialog()
     {
-        Console.WriteLine("Closing dialog!!!");
         WeakReferenceMessenger.Default.Send(new CloseProjectExploreDialogMessage());
+    }
+    
+    public ReactiveCommand<Unit, Unit> CreateCommand { get; }
+
+    private void OnProjectCreate()
+    {
+        Console.WriteLine("The create command was run.");
     }
 
     public NewProjectViewModel()
     {
         ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_templates);
+        this.ValidationRule(vm => vm.ProjectName,
+            name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 3,
+            "Name should be at least 3 characters long.");
+        this.ValidationRule(vm => vm.ProjectPath,
+            path => !string.IsNullOrWhiteSpace(path) && Directory.Exists(path),
+            "Project path should be a valid directory.");
+        CreateCommand = ReactiveCommand.Create(OnProjectCreate, ValidationContext.Valid);
+        _loadProjectTemplates();
+    }
+
+    private void _loadProjectTemplates()
+    {
         try
         {
             var templateFiles = Directory.GetFiles(_templatePath, "template.yaml", SearchOption.AllDirectories);

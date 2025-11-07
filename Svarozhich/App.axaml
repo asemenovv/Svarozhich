@@ -11,5 +11,13 @@
   
     <Application.Styles>
         <FluentTheme />
+        <Style Selector="TemplatedControl:error">
+            <Setter Property="BorderBrush" Value="#E53935"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="TextBox:error">
+            <Setter Property="BorderBrush" Value="#E53935"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
     </Application.Styles>
 </Application>

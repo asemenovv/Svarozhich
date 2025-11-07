@@ -20,24 +20,28 @@ public readonly struct ProjectExploreResult(ProjectExploreResultMode mode)
 
 public partial class ProjectsExploreDialog : Window
 {
-    private readonly MessageHandler<ProjectsExploreDialog, CloseProjectExploreDialogMessage> _closeDialogHandler =
-        static (dialog, message) => { dialog.Close(); };
-    private readonly MessageHandler<ProjectsExploreDialog, ShowOpenProjectsViewInProjectExploreDialogMessage> _showOpenProjectViewHandler =
-        static (dialog, message) =>
-        {
-            dialog.OpenProjectView.IsVisible = true;
-            dialog.OpenProjectButton.IsChecked = true;
-            dialog.NewProjectView.IsVisible = false;
-            dialog.CreateProjectButton.IsChecked = false;
-        };
-    private readonly MessageHandler<ProjectsExploreDialog, ShowCreateProjectsViewInProjectExploreDialogMessage> _showCreateProjectViewHandler =
-        static (dialog, message) =>
-        {
-            dialog.NewProjectView.IsVisible = true;
-            dialog.CreateProjectButton.IsChecked = true;
-            dialog.OpenProjectView.IsVisible = false;
-            dialog.OpenProjectButton.IsChecked = false;
-        };
+    private static void _closeDialogHandler(ProjectsExploreDialog dialog, CloseProjectExploreDialogMessage message)
+    {
+        dialog.Close();
+    }
+
+    private static void _showOpenProjectViewHandler(ProjectsExploreDialog dialog,
+        ShowOpenProjectsViewInProjectExploreDialogMessage message)
+    {
+        dialog.OpenProjectView.IsVisible = true;
+        dialog.OpenProjectButton.IsChecked = true;
+        dialog.NewProjectView.IsVisible = false;
+        dialog.CreateProjectButton.IsChecked = false;
+    }
+
+    private static void _showCreateProjectViewHandler(ProjectsExploreDialog dialog,
+        ShowCreateProjectsViewInProjectExploreDialogMessage message)
+    {
+        dialog.NewProjectView.IsVisible = true;
+        dialog.CreateProjectButton.IsChecked = true;
+        dialog.OpenProjectView.IsVisible = false;
+        dialog.OpenProjectButton.IsChecked = false;
+    }
 
     public ProjectsExploreDialog()
     {
@@ -46,8 +50,11 @@ public partial class ProjectsExploreDialog : Window
         if (Design.IsDesignMode)
             return;
 
-        WeakReferenceMessenger.Default.Register(this, _closeDialogHandler);
-        WeakReferenceMessenger.Default.Register(this, _showOpenProjectViewHandler);
-        WeakReferenceMessenger.Default.Register(this, _showCreateProjectViewHandler);
+        WeakReferenceMessenger.Default.Register<ProjectsExploreDialog,
+            CloseProjectExploreDialogMessage>(this, _closeDialogHandler);
+        WeakReferenceMessenger.Default.Register<ProjectsExploreDialog,
+            ShowOpenProjectsViewInProjectExploreDialogMessage>(this, _showOpenProjectViewHandler);
+        WeakReferenceMessenger.Default.Register<ProjectsExploreDialog,
+            ShowCreateProjectsViewInProjectExploreDialogMessage>(this, _showCreateProjectViewHandler);
     }
 }

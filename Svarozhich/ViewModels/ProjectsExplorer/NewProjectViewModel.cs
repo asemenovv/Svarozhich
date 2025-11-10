@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -13,17 +12,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using Svarozhich.Messages;
+using Svarozhich.Models;
 using Svarozhich.Utils;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
-
-public class ProjectTemplate
-{
-    public required string ProjectType { get; set; }
-    public required string ProjectFile { get; set; }
-    public required List<string> Folders { get; set; }
-    public Bitmap? PreviewImage { get; set; }
-}
 
 public partial class NewProjectViewModel : ViewModelBase
 {
@@ -37,7 +29,8 @@ public partial class NewProjectViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _name, value);
     }
     
-    private string _path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
+    // private string _path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
+    private string _path = "/Users/alexeysemenov/RiderProjects/Svarozhich/Svarozhich/Projects/";
     public string ProjectPath
     {
         get => _path;
@@ -46,8 +39,8 @@ public partial class NewProjectViewModel : ViewModelBase
     
     private readonly ObservableCollection<ProjectTemplate> _templates = [];
     public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
-    private ProjectTemplate? _selectedTemplate;
-    public ProjectTemplate? SelectedTemplate
+    private ProjectTemplate _selectedTemplate;
+    public ProjectTemplate SelectedTemplate
     {
         get => _selectedTemplate;
         set => this.RaiseAndSetIfChanged(ref _selectedTemplate, value);
@@ -60,9 +53,26 @@ public partial class NewProjectViewModel : ViewModelBase
     
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
 
-    private void OnProjectCreate()
+    private void CreateProject()
     {
-        Console.WriteLine("The create command was run.");
+        try
+        {
+            string projectHomePath = Path.Combine(_path, _name);
+            if (!Directory.Exists(projectHomePath))
+            {
+                Directory.CreateDirectory(projectHomePath);
+            }
+
+            _selectedTemplate.CreateFolders(projectHomePath);
+            var project = new ProjectViewModel(_name, projectHomePath);
+            var scene = project.CreateScene("Default Scene");
+            XmlSerializer.ToFile(project.ToModel(), Path.Combine(projectHomePath, _selectedTemplate.ProjectFile));
+        } catch (Exception e)
+        {
+            //TODO: Log exception
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public NewProjectViewModel()
@@ -71,24 +81,38 @@ public partial class NewProjectViewModel : ViewModelBase
         this.ValidationRule(vm => vm.ProjectName,
             name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 3,
             "Name should be at least 3 characters long.");
+        this.ValidationRule(vm => vm.ProjectName,
+            name => !string.IsNullOrWhiteSpace(name) && name.IndexOfAny(Path.GetInvalidFileNameChars()) == -1,
+            "Project name should be a valid file name.");
+        this.ValidationRule(vm => vm.ProjectName,
+                                name => !string.IsNullOrWhiteSpace(name)
+                                        && !string.IsNullOrWhiteSpace(_path)
+                                        && !Directory.Exists(_path + name),
+            "Project already exists.");
+        
         this.ValidationRule(vm => vm.ProjectPath,
-            path => !string.IsNullOrWhiteSpace(path) && Directory.Exists(path),
-            "Project path should be a valid directory.");
-        CreateCommand = ReactiveCommand.Create(OnProjectCreate, ValidationContext.Valid);
-        _loadProjectTemplates();
+            name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 0,
+            "Project folder not be empty.");
+        this.ValidationRule(vm => vm.ProjectPath,
+            name => name != null && name.IndexOfAny(Path.GetInvalidPathChars()) == -1,
+            "Project folder should be a valid path.");
+        
+        CreateCommand = ReactiveCommand.Create(CreateProject, ValidationContext.Valid);
+        LoadProjectTemplates();
     }
 
-    private void _loadProjectTemplates()
+    private void LoadProjectTemplates()
     {
         try
         {
-            var templateFiles = Directory.GetFiles(_templatePath, "template.yaml", SearchOption.AllDirectories);
+            var templateFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
             Debug.Assert(templateFiles.Length != 0);
             foreach (var templateFile in templateFiles)
             {
-                var template = YamlSerializer.FromFile<ProjectTemplate>(templateFile);
-                var previewImage = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
-                template.PreviewImage = new Bitmap(previewImage);
+                var template = XmlSerializer.FromFile<ProjectTemplate>(templateFile);
+                if (template == null) continue;
+                template.PreviewImagePath = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
+                template.PreviewImage = new Bitmap(template.PreviewImagePath);
                 _templates.Add(template);
             }
         }

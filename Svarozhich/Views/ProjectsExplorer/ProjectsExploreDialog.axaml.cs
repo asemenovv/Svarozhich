@@ -1,9 +1,6 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
 using Svarozhich.Messages;
-using Svarozhich.ViewModels;
-using Svarozhich.ViewModels.ProjectsExplorer;
 
 namespace Svarozhich.Views.ProjectsExplorer;
 

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
+             xmlns:models="clr-namespace:Svarozhich.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.ProjectsExplorer.NewProjectView"
              x:DataType="vm:NewProjectViewModel">
@@ -12,11 +13,11 @@
     
     <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ListBox Width="195" Height="250" SelectedIndex="0"
+            <ListBox Width="195" Height="250" SelectedIndex="0" SelectionMode="AlwaysSelected"
                      ItemsSource="{Binding ProjectTemplates}"
                      SelectedItem="{Binding SelectedTemplate}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:ProjectTemplate">
+                    <DataTemplate x:DataType="models:ProjectTemplate">
                         <TextBlock Text="{Binding ProjectType}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

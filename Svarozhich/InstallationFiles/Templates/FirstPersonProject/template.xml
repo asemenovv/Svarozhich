@@ -1,0 +1,11 @@
+<ProjectTemplate xmlns="http://schemas.datacontract.org/2004/07/Svarozhich.Models"
+                 xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Folders xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+        <a:string>.Svarozhich</a:string>
+        <a:string>Assets/Meshes</a:string>
+        <a:string>Assets/Materials</a:string>
+        <a:string>Scenes</a:string>
+    </Folders>
+    <ProjectFile>project.svch</ProjectFile>
+    <ProjectType>First Person Project</ProjectType>
+</ProjectTemplate>

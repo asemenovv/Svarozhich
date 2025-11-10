@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
         x:DataType="vm:ProjectsExploreDialogViewModel"
         WindowStartupLocation="CenterScreen" CanResize="False"
-        Title="Projects Explorer" Width="800" Height="530"
+        Title="Projects Explorer" Width="800" Height="550"
         TransparencyLevelHint="AcrylicBlur" Background="Transparent"
         ExtendClientAreaToDecorationsHint="True">
     

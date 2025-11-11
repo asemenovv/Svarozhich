@@ -11,13 +11,11 @@
   
     <Application.Styles>
         <FluentTheme />
-        <Style Selector="TemplatedControl:error">
-            <Setter Property="BorderBrush" Value="#E53935"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
-        <Style Selector="TextBox:error">
-            <Setter Property="BorderBrush" Value="#E53935"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
+        <StyleInclude Source="Styles/AppDefaultStyles.axaml"></StyleInclude>
     </Application.Styles>
+             
+    <Application.Resources>
+        <FontFamily x:Key="AkkoPro">/Assets/Fonts/AkkoPro-Regular.ttf#Akko Pro</FontFamily>
+        <FontFamily x:Key="AkkoProBold">/Assets/Fonts/AkkoPro-Bold.ttf#Akko Pro</FontFamily>
+    </Application.Resources>
 </Application>

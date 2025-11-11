@@ -37,6 +37,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Assets\Fonts\" />
+      <Folder Include="Assets\Phosphor\" />
       <Folder Include="Projects\" />
     </ItemGroup>
 </Project>

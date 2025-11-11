@@ -20,7 +20,7 @@ namespace Svarozhich.ViewModels.ProjectsExplorer;
 public partial class NewProjectViewModel : ViewModelBase
 {
     private readonly string _templatePath =
-        "/Users/alexeysemenov/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
+        $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
     
     private string _name = "New Project";
     public string ProjectName
@@ -57,7 +57,7 @@ public partial class NewProjectViewModel : ViewModelBase
     {
         try
         {
-            string projectHomePath = Path.Combine(_path, _name);
+            var projectHomePath = Path.Combine(_path, _name);
             if (!Directory.Exists(projectHomePath))
             {
                 Directory.CreateDirectory(projectHomePath);

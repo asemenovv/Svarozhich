@@ -15,7 +15,7 @@
     </Application.Styles>
              
     <Application.Resources>
-        <FontFamily x:Key="AkkoPro">/Assets/Fonts/AkkoPro-Regular.ttf#Akko Pro</FontFamily>
-        <FontFamily x:Key="AkkoProBold">/Assets/Fonts/AkkoPro-Bold.ttf#Akko Pro</FontFamily>
+        <FontFamily x:Key="Inter18PtRegular">/Assets/Fonts/Inter/static/Inter_18pt-Regular.ttf#Inter 18pt Regular</FontFamily>
+        <FontFamily x:Key="Inter18PtSemiBold">/Assets/Fonts/Inter/static/Inter_18pt-SemiBold.ttf#Inter 18pt SemiBold</FontFamily>
     </Application.Resources>
 </Application>

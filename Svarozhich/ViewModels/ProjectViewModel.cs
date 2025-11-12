@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Linq;
 using Svarozhich.Models;
 
 namespace Svarozhich.ViewModels;
@@ -13,25 +14,26 @@ public class ProjectViewModel : ViewModelBase
 
     public string FullPath => System.IO.Path.Combine(Path, $"/{Name}{Extension}");
 
-    private readonly ObservableCollection<Scene> _scenes = [];
-    public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
+    private readonly ObservableCollection<SceneViewModel> _scenes = [];
+    public ReadOnlyObservableCollection<SceneViewModel> Scenes { get; private set; }
 
     public ProjectViewModel(string name, string path)
     {
         Name = name;
         Path = path;
-        Scenes = new ReadOnlyObservableCollection<Scene>(_scenes);
+        Scenes = new ReadOnlyObservableCollection<SceneViewModel>(_scenes);
     }
 
-    public Project ToModel() => new()
+    public ProjectBinding ToModel() => new()
     {
         Name = Name,
-        Path = Path
+        Path = Path,
+        Scenes = Scenes.Select(s => s.ToModel()).ToList()
     };
 
-    public Scene CreateScene(string name)
+    public SceneViewModel CreateScene(string name)
     {
-        var scene = new Scene(this, name);
+        var scene = new SceneViewModel(this, name, "Scenes/");
         _scenes.Add(scene);
         return scene;
     }

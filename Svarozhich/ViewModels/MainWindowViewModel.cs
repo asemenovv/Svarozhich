@@ -7,7 +7,7 @@ public class MainWindowViewModel : ViewModelBase
 {
     public string FahrenheitValue { get; } = "0.0";
     public string CelsiusValue { get; } = "0.0";
-    public Scene Scene { get; } = new Scene(new ProjectViewModel("", ""), "Room");
+    public SceneViewModel Scene { get; } = new SceneViewModel(new ProjectViewModel("", ""), "Room", "");
 
     public MainWindowViewModel()
     {

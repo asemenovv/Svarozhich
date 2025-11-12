@@ -5,8 +5,8 @@ using Avalonia.Media.Imaging;
 
 namespace Svarozhich.Models;
 
-[DataContract]
-public class ProjectTemplate
+[DataContract(Name = "ProjectTemplate")]
+public class ProjectTemplateBinding
 {
     [DataMember]
     public required string ProjectType { get; set; }

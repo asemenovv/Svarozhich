@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Svarozhich.ViewModels;
 
 namespace Svarozhich.Models;
 
 [DataContract(Name = "Project")]
-public class Project
+public class ProjectBinding
 {
     [DataMember(Order = 1)]
     public required string Name { get; set; }
@@ -13,5 +14,5 @@ public class Project
     public required string Path { get; set; }
 
     [DataMember(Order = 3)]
-    public List<Scene> Scenes { get; set; } = [];
+    public List<SceneRefBinding> Scenes { get; set; } = [];
 }

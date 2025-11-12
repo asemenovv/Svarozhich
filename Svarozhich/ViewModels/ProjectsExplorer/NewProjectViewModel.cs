@@ -37,10 +37,10 @@ public partial class NewProjectViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _path, value);
     }
     
-    private readonly ObservableCollection<ProjectTemplate> _templates = [];
-    public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
-    private ProjectTemplate _selectedTemplate;
-    public ProjectTemplate SelectedTemplate
+    private readonly ObservableCollection<ProjectTemplateBinding> _templates = [];
+    public ReadOnlyObservableCollection<ProjectTemplateBinding> ProjectTemplates { get; }
+    private ProjectTemplateBinding _selectedTemplate;
+    public ProjectTemplateBinding SelectedTemplate
     {
         get => _selectedTemplate;
         set => this.RaiseAndSetIfChanged(ref _selectedTemplate, value);
@@ -77,7 +77,7 @@ public partial class NewProjectViewModel : ViewModelBase
 
     public NewProjectViewModel()
     {
-        ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_templates);
+        ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplateBinding>(_templates);
         this.ValidationRule(vm => vm.ProjectName,
             name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 3,
             "Name should be at least 3 characters long.");
@@ -109,7 +109,7 @@ public partial class NewProjectViewModel : ViewModelBase
             Debug.Assert(templateFiles.Length != 0);
             foreach (var templateFile in templateFiles)
             {
-                var template = XmlSerializer.FromFile<ProjectTemplate>(templateFile);
+                var template = XmlSerializer.FromFile<ProjectTemplateBinding>(templateFile);
                 if (template == null) continue;
                 template.PreviewImagePath = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
                 template.PreviewImage = new Bitmap(template.PreviewImagePath);

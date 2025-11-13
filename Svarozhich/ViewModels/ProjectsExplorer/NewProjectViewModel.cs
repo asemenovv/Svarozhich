@@ -5,9 +5,7 @@ using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
@@ -17,7 +15,7 @@ using Svarozhich.Utils;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
-public partial class NewProjectViewModel : ViewModelBase
+public class NewProjectViewModel : ViewModelBase
 {
     private readonly string _templatePath =
         $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
@@ -29,6 +27,8 @@ public partial class NewProjectViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _name, value);
     }
     
+    public Interaction<Unit, string?> PickFolderInteraction { get; }
+    
     // private string _path = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
     private string _path = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/Projects/";
     public string ProjectPath
@@ -39,8 +39,8 @@ public partial class NewProjectViewModel : ViewModelBase
     
     private readonly ObservableCollection<ProjectTemplateBinding> _templates = [];
     public ReadOnlyObservableCollection<ProjectTemplateBinding> ProjectTemplates { get; }
-    private ProjectTemplateBinding _selectedTemplate;
-    public ProjectTemplateBinding SelectedTemplate
+    private ProjectTemplateBinding? _selectedTemplate;
+    public ProjectTemplateBinding? SelectedTemplate
     {
         get => _selectedTemplate;
         set => this.RaiseAndSetIfChanged(ref _selectedTemplate, value);
@@ -53,30 +53,9 @@ public partial class NewProjectViewModel : ViewModelBase
     
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
 
-    private void CreateProject()
-    {
-        try
-        {
-            var projectHomePath = Path.Combine(_path, _name);
-            if (!Directory.Exists(projectHomePath))
-            {
-                Directory.CreateDirectory(projectHomePath);
-            }
-
-            _selectedTemplate.CreateFolders(projectHomePath);
-            var project = new Project(_name, projectHomePath);
-            var scene = project.CreateScene("Default Scene");
-            project.Save(new XmlSerializer());
-        } catch (Exception e)
-        {
-            //TODO: Log exception
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
     public NewProjectViewModel()
     {
+        PickFolderInteraction = new Interaction<Unit, string?>();
         ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplateBinding>(_templates);
         this.ValidationRule(vm => vm.ProjectName,
             name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 3,
@@ -85,9 +64,9 @@ public partial class NewProjectViewModel : ViewModelBase
             name => !string.IsNullOrWhiteSpace(name) && name.IndexOfAny(Path.GetInvalidFileNameChars()) == -1,
             "Project name should be a valid file name.");
         this.ValidationRule(vm => vm.ProjectName,
-                                name => !string.IsNullOrWhiteSpace(name)
-                                        && !string.IsNullOrWhiteSpace(_path)
-                                        && !Directory.Exists(_path + name),
+            name => !string.IsNullOrWhiteSpace(name)
+                    && !string.IsNullOrWhiteSpace(_path)
+                    && !Directory.Exists(_path + name),
             "Project already exists.");
         
         this.ValidationRule(vm => vm.ProjectPath,
@@ -99,6 +78,35 @@ public partial class NewProjectViewModel : ViewModelBase
         
         CreateCommand = ReactiveCommand.Create(CreateProject, ValidationContext.Valid);
         LoadProjectTemplates();
+    }
+    
+    public async Task PickFolderAsync()
+    {
+        var path = await PickFolderInteraction.Handle(Unit.Default);
+        if (path != null)
+            ProjectPath = path;
+    }
+
+    private void CreateProject()
+    {
+        try
+        {
+            var projectHomePath = Path.Combine(_path, _name);
+            if (!Directory.Exists(projectHomePath))
+            {
+                Directory.CreateDirectory(projectHomePath);
+            }
+
+            _selectedTemplate?.CreateFolders(projectHomePath);
+            var project = new Project(_name, projectHomePath);
+            project.CreateScene("Default Scene");
+            project.Save(new XmlSerializer());
+        } catch (Exception e)
+        {
+            //TODO: Log exception
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     private void LoadProjectTemplates()

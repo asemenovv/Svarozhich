@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Svarozhich.ViewModels.ProjectsExplorer;
+using Svarozhich.Views.ProjectsExplorer;
 
 namespace Svarozhich.Messages;
 

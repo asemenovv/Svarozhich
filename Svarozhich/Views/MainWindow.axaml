@@ -24,13 +24,13 @@
         <Rectangle Height="100" DockPanel.Dock="Top"/>
         <Rectangle Height="100" DockPanel.Dock="Bottom"/>
         
-        <TreeView DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Scene.Entities}">
-            <TreeView.ItemTemplate>
-                <TreeDataTemplate ItemsSource="{Binding SubNodes}">
-                    <TextBlock Text="{Binding Title}"></TextBlock>
-                </TreeDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
+        <!-- <TreeView DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Scene.Entities}"> -->
+            <!-- <TreeView.ItemTemplate> -->
+                <!-- <TreeDataTemplate ItemsSource="{Binding SubNodes}"> -->
+                    <!-- <TextBlock Text="{Binding Title}"></TextBlock> -->
+                <!-- </TreeDataTemplate> -->
+            <!-- </TreeView.ItemTemplate> -->
+        <!-- </TreeView> -->
         
         <StackPanel Width="250" DockPanel.Dock="Right"/>
         <StackPanel>

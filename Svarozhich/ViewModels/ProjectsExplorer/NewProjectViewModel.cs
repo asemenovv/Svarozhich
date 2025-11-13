@@ -29,8 +29,8 @@ public partial class NewProjectViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _name, value);
     }
     
-    // private string _path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
-    private string _path = "/Users/alexeysemenov/RiderProjects/Svarozhich/Svarozhich/Projects/";
+    // private string _path = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
+    private string _path = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/Projects/";
     public string ProjectPath
     {
         get => _path;
@@ -64,9 +64,9 @@ public partial class NewProjectViewModel : ViewModelBase
             }
 
             _selectedTemplate.CreateFolders(projectHomePath);
-            var project = new ProjectViewModel(_name, projectHomePath);
+            var project = new Project(_name, projectHomePath);
             var scene = project.CreateScene("Default Scene");
-            XmlSerializer.ToFile(project.ToModel(), Path.Combine(projectHomePath, _selectedTemplate.ProjectFile));
+            project.Save(new XmlSerializer());
         } catch (Exception e)
         {
             //TODO: Log exception
@@ -109,7 +109,8 @@ public partial class NewProjectViewModel : ViewModelBase
             Debug.Assert(templateFiles.Length != 0);
             foreach (var templateFile in templateFiles)
             {
-                var template = XmlSerializer.FromFile<ProjectTemplateBinding>(templateFile);
+                var serializer = new XmlSerializer();
+                var template = serializer.FromFile<ProjectTemplateBinding>(templateFile);
                 if (template == null) continue;
                 template.PreviewImagePath = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
                 template.PreviewImage = new Bitmap(template.PreviewImagePath);

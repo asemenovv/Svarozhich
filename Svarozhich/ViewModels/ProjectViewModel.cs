@@ -1,40 +1,25 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using ReactiveUI;
 using Svarozhich.Models;
 
 namespace Svarozhich.ViewModels;
 
 public class ProjectViewModel : ViewModelBase
 {
-    private static string Extension { get; } = ".svch";
+    private Project _model;
 
-    public string Name { get; private set; }
-
-    public string Path { get; private set; }
-
-    public string FullPath => System.IO.Path.Combine(Path, $"/{Name}{Extension}");
-
-    private readonly ObservableCollection<SceneViewModel> _scenes = [];
-    public ReadOnlyObservableCollection<SceneViewModel> Scenes { get; private set; }
-
-    public ProjectViewModel(string name, string path)
+    public string Name
     {
-        Name = name;
-        Path = path;
-        Scenes = new ReadOnlyObservableCollection<SceneViewModel>(_scenes);
+        get => _model.Name;
+        private set { }
     }
 
-    public ProjectBinding ToModel() => new()
-    {
-        Name = Name,
-        Path = Path,
-        Scenes = Scenes.Select(s => s.ToModel()).ToList()
-    };
+    public string Path { get; private set; }
+    public ReadOnlyObservableCollection<SceneViewModel> Scenes { get; private set; }
 
-    public SceneViewModel CreateScene(string name)
+    public ProjectViewModel(Project model)
     {
-        var scene = new SceneViewModel(this, name, "Scenes/");
-        _scenes.Add(scene);
-        return scene;
+        _model = model;
     }
 }

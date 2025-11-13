@@ -11,7 +11,7 @@ public class ProjectBinding
     public required string Name { get; set; }
 
     [DataMember(Order = 2)]
-    public required string Path { get; set; }
+    public required string RootFolder { get; set; }
 
     [DataMember(Order = 3)]
     public List<SceneRefBinding> Scenes { get; set; } = [];

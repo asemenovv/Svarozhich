@@ -7,10 +7,10 @@ namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class OpenProjectViewModel : ViewModelBase
 {
-    public Interaction<Unit, Unit> CloseDialogInteraction { get; } = new();
+    public Interaction<ProjectExploreResult, Unit> CloseDialogInteraction { get; } = new();
 
     public async Task CloseDialog()
     {
-        await CloseDialogInteraction.Handle(Unit.Default);
+        await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Exit));
     }
 }

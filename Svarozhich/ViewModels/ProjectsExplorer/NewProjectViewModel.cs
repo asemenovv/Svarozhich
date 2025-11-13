@@ -27,14 +27,14 @@ public class NewProjectViewModel : ViewModelBase
     public ProjectTemplateDto? SelectedTemplate {  get; set; }
     
     public Interaction<Unit, string?> PickFolderInteraction { get; }
-    public Interaction<Unit, Unit> CloseDialogInteraction { get; }
-    public ReactiveCommand<Unit, Unit> CreateCommand { get; }
+    public Interaction<ProjectExploreResult, Unit> CloseDialogInteraction { get; }
+    public ReactiveCommand<Unit, Task> CreateCommand { get; }
     public ObservableCollection<ProjectTemplateDto> ProjectTemplates { get; } = [];
 
     public NewProjectViewModel()
     {
         PickFolderInteraction = new Interaction<Unit, string?>();
-        CloseDialogInteraction = new Interaction<Unit, Unit>();
+        CloseDialogInteraction = new Interaction<ProjectExploreResult, Unit>();
         this.ValidationRule(vm => vm.ProjectName,
             name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 3,
             "Name should be at least 3 characters long.");
@@ -67,10 +67,10 @@ public class NewProjectViewModel : ViewModelBase
     
     public async Task CloseDialog()
     {
-        await CloseDialogInteraction.Handle(Unit.Default);
+        await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Exit));
     }
 
-    private void CreateProject()
+    private async Task CreateProject()
     {
         try
         {
@@ -84,6 +84,7 @@ public class NewProjectViewModel : ViewModelBase
             var project = new Project(ProjectName, projectHomePath);
             project.CreateScene("Default Scene");
             project.Save(new XmlSerializer());
+            await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
         } catch (Exception e)
         {
             //TODO: Log exception

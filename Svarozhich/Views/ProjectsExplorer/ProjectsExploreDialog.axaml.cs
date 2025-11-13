@@ -1,3 +1,4 @@
+using System.Reactive;
 using System.Reactive.Disposables.Fluent;
 using Avalonia.Controls;
 using ReactiveUI;
@@ -5,17 +6,6 @@ using ReactiveUI.Avalonia;
 using Svarozhich.ViewModels.ProjectsExplorer;
 
 namespace Svarozhich.Views.ProjectsExplorer;
-
-public enum ProjectExploreResultMode
-{
-    Open,
-    Create
-}
-
-public readonly struct ProjectExploreResult(ProjectExploreResultMode mode)
-{
-    private ProjectExploreResultMode Mode { get; } = mode;
-}
 
 public partial class ProjectsExploreDialog : ReactiveWindow<ProjectsExploreDialogViewModel>
 {
@@ -33,8 +23,16 @@ public partial class ProjectsExploreDialog : ReactiveWindow<ProjectsExploreDialo
             var openProjectVm = (OpenProjectView.DataContext as OpenProjectViewModel);
             vm.ShowOpenProjectViewInteraction.RegisterHandler(_ => ShowOpenProjectView());
             vm.ShowCreateProjectViewInteraction.RegisterHandler(_ => ShowCreateProjectView());
-            newProjectVm?.CloseDialogInteraction.RegisterHandler(_ => Close()).DisposeWith(disposables);
-            openProjectVm?.CloseDialogInteraction.RegisterHandler(_ => Close()).DisposeWith(disposables);
+            newProjectVm?.CloseDialogInteraction.RegisterHandler(result =>
+                {
+                    Close(result.Input);
+                })
+                .DisposeWith(disposables);
+            openProjectVm?.CloseDialogInteraction.RegisterHandler(result =>
+                {
+                    Close(result.Input);
+                })
+                .DisposeWith(disposables);
         });
     }
 

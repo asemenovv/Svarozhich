@@ -21,7 +21,7 @@ public partial class MainWindow : Window
                 DataContext = new ProjectsExploreDialogViewModel()
             };
             var result = await projectsExploreDialog.ShowDialog<ProjectExploreResult?>(this);
-            if (result == null)
+            if (result is { Mode: ProjectExploreResultMode.Exit })
             {
                 Close();
             }

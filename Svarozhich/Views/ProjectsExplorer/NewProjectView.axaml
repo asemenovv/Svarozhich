@@ -17,7 +17,7 @@
                      ItemsSource="{Binding ProjectTemplates}"
                      SelectedItem="{Binding SelectedTemplate}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:ProjectTemplateBinding">
+                    <DataTemplate x:DataType="models:ProjectTemplateDto">
                         <TextBlock Text="{Binding ProjectType}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

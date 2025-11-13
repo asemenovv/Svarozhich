@@ -1,20 +1,22 @@
-using System;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using Svarozhich.Messages;
+using ReactiveUI;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class ProjectsExploreDialogViewModel : ViewModelBase
 {
-    public void ShowOpenProjectView()
+    public Interaction<Unit, Unit> ShowOpenProjectViewInteraction { get; } = new();
+    public Interaction<Unit, Unit> ShowCreateProjectViewInteraction { get; } = new();
+
+    public async Task ShowOpenProjectView()
     {
-        WeakReferenceMessenger.Default.Send(new ShowOpenProjectsViewInProjectExploreDialogMessage());
+        await ShowOpenProjectViewInteraction.Handle(Unit.Default);
     }
     
-    public void ShowCreateProjectView()
+    public async Task ShowCreateProjectView()
     {
-        WeakReferenceMessenger.Default.Send(new ShowCreateProjectsViewInProjectExploreDialogMessage());
+        await ShowCreateProjectViewInteraction.Handle(Unit.Default);
     }
 }

@@ -6,10 +6,9 @@ using Svarozhich.Utils;
 
 namespace Svarozhich.Models;
 
-public class Project
+public class Project : PersistedEntity
 {
-    private static readonly string Extension = ".svch";
-    private bool _isDirty;
+    private const string Extension = ".svch";
     private readonly List<Scene> _scenes = [];
     public string Name { get; private set; }
     private string RootFolder { get; set; }
@@ -29,6 +28,7 @@ public class Project
         }
         Name = name.Trim();
         RootFolder = rootFolder.Trim();
+        MarkDirty();
     }
 
     public Scene CreateScene(string name, string projectFolder = "Scenes/")
@@ -46,30 +46,35 @@ public class Project
 
     public void Save(ISerializer serializer)
     {
-        if (_isDirty)
+        if (IsDirty)
         {
-            serializer.ToFile(ToDto(), FullPath());
+            serializer.ToFile(ToDto(), ProjectFilePath());
+            foreach (var scene in Scenes)
+            {
+                scene.Save(serializer);
+            }
         }
-        _isDirty =  false;
+        MarkClean();
     }
-    
-    private string FullPath()
+
+    public string AbsolutePath(string projectLocalPath)
+    {
+        return Path.Combine(RootFolder, projectLocalPath);
+    }
+
+    private string ProjectFilePath()
     {
         return Path.Combine(RootFolder, $"{Name}{Extension}");
     }
 
     private ProjectBinding ToDto()
     {
-        var dto = new ProjectBinding()
+        var dto = new ProjectBinding
         {
             Name = Name,
-            RootFolder = RootFolder
+            RootFolder = RootFolder,
+            Scenes = _scenes.Select(s => s.ToRefDto()).ToList()
         };
         return dto;
-    }
-
-    private void MarkDirty()
-    {
-        _isDirty = true;
     }
 }

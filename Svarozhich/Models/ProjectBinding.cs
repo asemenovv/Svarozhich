@@ -14,5 +14,5 @@ public class ProjectBinding
     public required string RootFolder { get; set; }
 
     [DataMember(Order = 3)]
-    public List<SceneRefBinding> Scenes { get; set; } = [];
+    public List<SceneRefDto> Scenes { get; set; } = [];
 }

@@ -34,7 +34,7 @@ public class SceneViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _path, value);
     }
     
-    public SceneRefBinding ToModel() => new()
+    public SceneRefDto ToModel() => new()
     {
         Name = Name,
         Path = FullPath,

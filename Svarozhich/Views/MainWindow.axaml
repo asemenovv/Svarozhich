@@ -14,27 +14,94 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <DockPanel>
-        <Menu DockPanel.Dock="Top">
+    <Grid RowDefinitions="Auto,*,25" ColumnDefinitions="Auto,*">
+        <Menu Grid.Row="0" >
             <MenuItem Header="_File">
-                <MenuItem Header="Open"/>
+                <MenuItem Header="Open Project"/>
                 <MenuItem Header="Save"/>
             </MenuItem>
+            <MenuItem Header="_Scene" />
         </Menu>
+        <DockControl x:Name="DockControl" Margin="4" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                     InitializeLayout="True" InitializeFactory="True">
+            <DockControl.Factory>
+                <Factory HideToolsOnClose="True" HideDocumentsOnClose="True" />
+            </DockControl.Factory>
+            
+            <RootDock x:Name="Root" Id="Root" IsCollapsable="False" DefaultDockable="{Binding #MainLayout}">
+                <!-- <RootDock.Windows> -->
+                <!-- </RootDock.Windows> -->
+                
+                <ProportionalDock x:Name="MainLayout" Id="MainLayout" Orientation="Horizontal">
+                    <ToolDock x:Name="LeftPane" Id="SceneExplorerPane" Proportion="0.25" Alignment="Left">
+                        <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="Scene Explorer">
+                            <TextBlock Text="ECS"/>
+                        </Tool>
+                    </ToolDock>
+                
+                    <ProportionalDockSplitter x:Name="LeftSplitter" Id="LeftSplitter" />
+                
+                    <ProportionalDock x:Name="TopPane" Id="TopPane" Orientation="Vertical">
+                        <ProportionalDock x:Name="RightPane" Id="RightPane" Orientation="Horizontal">
+                            <DocumentDock x:Name="DocumentsPane" Id="DocumentsPane" CanCreateDocument="True" ActiveDockable="Document1">
+                                <DocumentDock.DocumentTemplate>
+                                    <DocumentTemplate>
+                                        <StackPanel x:DataType="Document">
+                                            <TextBlock Text="Title"/>
+                                            <TextBox Text="{Binding Title}"/>
+                                            <TextBlock Text="Context"/>
+                                            <TextBox Text="{Binding Context}" AcceptsReturn="True"/>
+                                        </StackPanel>
+                                    </DocumentTemplate>
+                                </DocumentDock.DocumentTemplate>
+                                <Document x:Name="Document1" Id="Document1" Title="Program.cs" Context="" x:DataType="Document">
+                                    <TextBox Text="{Binding Context}" AcceptsReturn="True"/>
+                                </Document>
+                                <Document x:Name="Document2" Id="Document2" Title="App.axaml" Context="" x:DataType="Document">
+                                    <TextBox Text="{Binding Context}" AcceptsReturn="True"/>
+                                </Document>
+                            </DocumentDock>
+                        
+                            <ProportionalDockSplitter x:Name="RightSplitter" Id="RightSplitter" />
+                        
+                            <ToolDock x:Name="PropertiesPane" Id="PropertiesPane" Proportion="0.3" Alignment="Right">
+                                <Tool x:Name="Properties" Id="Properties" Title="Properties" x:DataType="Tool">
+                                    <TextBlock Text="{Binding Title}"/>
+                                </Tool>
+                            </ToolDock>
+                        </ProportionalDock>
+                    
+                        <ProportionalDockSplitter x:Name="BottomSplitter" Id="BottomSplitter" />
+                    
+                        <ToolDock x:Name="BottomPane" Id="BottomPane" Proportion="0.3" Alignment="Bottom" ActiveDockable="Output">
+                            <Tool x:Name="ErrorList" Id="ErrorList" Title="Error List" x:DataType="Tool">
+                                <TextBlock Text="{Binding Title}"/>
+                            </Tool>
+                            <Tool x:Name="Output" Id="Output" Title="Output" x:DataType="Tool">
+                                <TextBlock Text="{Binding Title}"/>
+                            </Tool>
+                        </ToolDock>
+                    </ProportionalDock>
+                </ProportionalDock>
+            </RootDock>
+        </DockControl>
+    </Grid>
+    
+    <!--<DockPanel>
         <Rectangle Height="100" DockPanel.Dock="Top"/>
         <Rectangle Height="100" DockPanel.Dock="Bottom"/>
         
-        <!-- <TreeView DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Scene.Entities}"> -->
-            <!-- <TreeView.ItemTemplate> -->
-                <!-- <TreeDataTemplate ItemsSource="{Binding SubNodes}"> -->
-                    <!-- <TextBlock Text="{Binding Title}"></TextBlock> -->
-                <!-- </TreeDataTemplate> -->
-            <!-- </TreeView.ItemTemplate> -->
-        <!-- </TreeView> -->
+        ~1~ <TreeView DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Scene.Entities}"> @1@
+            ~1~ <TreeView.ItemTemplate> @1@
+                ~1~ <TreeDataTemplate ItemsSource="{Binding SubNodes}"> @1@
+                    ~1~ <TextBlock Text="{Binding Title}"></TextBlock> @1@
+                ~1~ </TreeDataTemplate> @1@
+            ~1~ </TreeView.ItemTemplate> @1@
+        ~1~ </TreeView> @1@
         
         <StackPanel Width="250" DockPanel.Dock="Right"/>
         <StackPanel>
             <TextBlock Text="Hello"></TextBlock>
         </StackPanel>
-    </DockPanel>
+    </DockPanel>-->
 </Window>

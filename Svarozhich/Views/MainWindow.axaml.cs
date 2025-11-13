@@ -23,7 +23,7 @@ public partial class MainWindow : Window
             var result = await projectsExploreDialog.ShowDialog<ProjectExploreResult?>(this);
             if (result is { Mode: ProjectExploreResultMode.Exit })
             {
-                Close();
+                //Close();
             }
         }
         catch (Exception exception)

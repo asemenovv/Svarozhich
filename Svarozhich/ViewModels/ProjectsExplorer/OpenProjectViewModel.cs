@@ -1,14 +1,21 @@
-using System;
-using CommunityToolkit.Mvvm.Messaging;
-using Svarozhich.Messages;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using ReactiveUI;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class OpenProjectViewModel : ViewModelBase
 {
-    public void CloseDialog()
+    public Interaction<Unit, Unit> CloseDialogInteraction { get; }
+
+    public OpenProjectViewModel()
     {
-        Console.WriteLine("Closing dialog!!!");
-        WeakReferenceMessenger.Default.Send(new CloseProjectExploreDialogMessage());
+        CloseDialogInteraction = new Interaction<Unit, Unit>();
+    }
+
+    public async Task CloseDialog()
+    {
+        await CloseDialogInteraction.Handle(Unit.Default);
     }
 }

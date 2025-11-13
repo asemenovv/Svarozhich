@@ -28,6 +28,7 @@ public class NewProjectViewModel : ViewModelBase
     }
     
     public Interaction<Unit, string?> PickFolderInteraction { get; }
+    public Interaction<Unit, Unit> CloseDialogInteraction { get; }
     
     // private string _path = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}/Svarozhich/";
     private string _path = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/Projects/";
@@ -46,16 +47,12 @@ public class NewProjectViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _selectedTemplate, value);
     }
     
-    public void CloseDialog()
-    {
-        WeakReferenceMessenger.Default.Send(new CloseProjectExploreDialogMessage());
-    }
-    
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
 
     public NewProjectViewModel()
     {
         PickFolderInteraction = new Interaction<Unit, string?>();
+        CloseDialogInteraction = new Interaction<Unit, Unit>();
         ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplateBinding>(_templates);
         this.ValidationRule(vm => vm.ProjectName,
             name => !string.IsNullOrWhiteSpace(name) && name.Trim().Length > 3,
@@ -85,6 +82,11 @@ public class NewProjectViewModel : ViewModelBase
         var path = await PickFolderInteraction.Handle(Unit.Default);
         if (path != null)
             ProjectPath = path;
+    }
+    
+    public async Task CloseDialog()
+    {
+        await CloseDialogInteraction.Handle(Unit.Default);
     }
 
     private void CreateProject()

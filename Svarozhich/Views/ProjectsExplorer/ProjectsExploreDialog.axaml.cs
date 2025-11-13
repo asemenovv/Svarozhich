@@ -1,6 +1,10 @@
+using System.Reactive.Disposables.Fluent;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
+using ReactiveUI;
+using ReactiveUI.Avalonia;
 using Svarozhich.Messages;
+using Svarozhich.ViewModels.ProjectsExplorer;
 
 namespace Svarozhich.Views.ProjectsExplorer;
 
@@ -15,13 +19,8 @@ public readonly struct ProjectExploreResult(ProjectExploreResultMode mode)
     private ProjectExploreResultMode Mode { get; } = mode;
 }
 
-public partial class ProjectsExploreDialog : Window
+public partial class ProjectsExploreDialog : ReactiveWindow<ProjectsExploreDialogViewModel>
 {
-    private static void _closeDialogHandler(ProjectsExploreDialog dialog, CloseProjectExploreDialogMessage message)
-    {
-        dialog.Close();
-    }
-
     private static void _showOpenProjectViewHandler(ProjectsExploreDialog dialog,
         ShowOpenProjectsViewInProjectExploreDialogMessage message)
     {
@@ -46,9 +45,14 @@ public partial class ProjectsExploreDialog : Window
 
         if (Design.IsDesignMode)
             return;
-
-        WeakReferenceMessenger.Default.Register<ProjectsExploreDialog,
-            CloseProjectExploreDialogMessage>(this, _closeDialogHandler);
+        
+        this.WhenActivated(disposables =>
+        {
+            var newProjectVm = (NewProjectView.DataContext as NewProjectViewModel);
+            var openProjectVm = (OpenProjectView.DataContext as OpenProjectViewModel);
+            newProjectVm?.CloseDialogInteraction.RegisterHandler(_ => Close()).DisposeWith(disposables);
+            openProjectVm?.CloseDialogInteraction.RegisterHandler(_ => Close()).DisposeWith(disposables);
+        });
         WeakReferenceMessenger.Default.Register<ProjectsExploreDialog,
             ShowOpenProjectsViewInProjectExploreDialogMessage>(this, _showOpenProjectViewHandler);
         WeakReferenceMessenger.Default.Register<ProjectsExploreDialog,

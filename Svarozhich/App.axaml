@@ -13,12 +13,11 @@
         <FluentTheme />
         <DockFluentTheme />
         <StyleInclude Source="Styles/AppDefaultStyles.axaml"></StyleInclude>
+        <StyleInclude Source="Styles/DockStyles.axaml"></StyleInclude>
     </Application.Styles>
 
     <Application.Resources>
         <FontFamily x:Key="Inter18PtRegular">/Assets/Fonts/Inter/static/Inter_18pt-Regular.ttf#Inter 18pt Regular</FontFamily>
         <FontFamily x:Key="Inter18PtSemiBold">/Assets/Fonts/Inter/static/Inter_18pt-SemiBold.ttf#Inter 18pt SemiBold</FontFamily>
-
-        <ControlRecycling x:Key="ControlRecyclingKey" TryToUseIdAsKey="True" />
     </Application.Resources>
 </Application>

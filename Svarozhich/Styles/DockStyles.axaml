@@ -5,8 +5,33 @@
             <!-- Add Controls for Previewer Here -->
         </Border>
     </Design.PreviewWith>
-
-    <Style Selector="DockControl">
-        <Setter Property="(ControlRecyclingDataTemplate.ControlRecycling)" Value="{StaticResource ControlRecyclingKey}" />
+    
+    <Style Selector="ToolChromeControl Grid#PART_Grip">
+        <Setter Property="Background" Value="BlueViolet"/>
     </Style>
+    <Style Selector="ToolChromeControl:active Grid#PART_Grip">
+        <Setter Property="Background" Value="Yellow"/>
+    </Style>
+        
+    <!--<Style Selector="DocumentControl">
+            <Setter Property="HeaderTemplate">
+                <DataTemplate DataType="core:IDockable">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="M5 1L13 9V15H3V1Z" Width="16" Height="16" />
+                        <TextBlock Text="{Binding Title}" Background="LightGreen" Padding="4,0,0,0" />
+                    </StackPanel>
+                </DataTemplate>
+            </Setter>
+        </Style>-->
+        
+    <!--<Style Selector="ToolControl">
+            <Setter Property="HeaderTemplate">
+                <DataTemplate DataType="core:IDockable">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="M5 1L13 9V15H3V1Z" Width="16" Height="16" />
+                        <TextBlock Text="{Binding Title}" Background="LightGreen" Padding="4,0,0,0" />
+                    </StackPanel>
+                </DataTemplate>
+            </Setter>
+        </Style>-->
 </Styles>

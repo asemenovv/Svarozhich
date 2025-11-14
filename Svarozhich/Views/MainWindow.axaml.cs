@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Svarozhich.ViewModels;
 using Svarozhich.ViewModels.ProjectsExplorer;
 using Svarozhich.Views.ProjectsExplorer;
 
@@ -7,20 +8,20 @@ namespace Svarozhich.Views;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    private readonly ProjectsExploreDialog _projectsExploreDialog;
+
+    public MainWindow(MainWindowViewModel viewModel, ProjectsExploreDialog projectsExploreDialog)
     {
+        _projectsExploreDialog = projectsExploreDialog;
         InitializeComponent();
+        DataContext = viewModel;
     }
 
     private async void Window_OnOpened(object? sender, EventArgs eventArgs)
     {
         try
         {
-            var projectsExploreDialog = new ProjectsExploreDialog()
-            {
-                DataContext = new ProjectsExploreDialogViewModel()
-            };
-            var result = await projectsExploreDialog.ShowDialog<ProjectExploreResult?>(this);
+            var result = await _projectsExploreDialog.ShowDialog<ProjectExploreResult?>(this);
             if (result is { Mode: ProjectExploreResultMode.Exit })
             {
                 //Close();

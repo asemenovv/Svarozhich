@@ -29,6 +29,7 @@
         <PackageReference Include="Dock.Model.ReactiveUI" Version="11.3.6.5" />
         <PackageReference Include="Dock.Model.ReactiveUI.Navigation" Version="11.3.6.5" />
         <PackageReference Include="Dock.Serializer.Newtonsoft" Version="11.3.6.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
         <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
         <PackageReference Include="ReactiveUI.Validation" Version="6.0.5" />

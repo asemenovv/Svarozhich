@@ -9,20 +9,20 @@ namespace Svarozhich.Views.ProjectsExplorer;
 
 public partial class ProjectsExploreDialog : ReactiveWindow<ProjectsExploreDialogViewModel>
 {
-    public ProjectsExploreDialog()
+    public ProjectsExploreDialog(ProjectsExploreDialogViewModel viewModel)
     {
         InitializeComponent();
+        DataContext = viewModel;
 
         if (Design.IsDesignMode)
             return;
         
         this.WhenActivated(disposables =>
         {
-            var vm = (ProjectsExploreDialogViewModel)DataContext!;
             var newProjectVm = (NewProjectView.DataContext as NewProjectViewModel);
             var openProjectVm = (OpenProjectView.DataContext as OpenProjectViewModel);
-            vm.ShowOpenProjectViewInteraction.RegisterHandler(_ => ShowOpenProjectView());
-            vm.ShowCreateProjectViewInteraction.RegisterHandler(_ => ShowCreateProjectView());
+            viewModel.ShowOpenProjectViewInteraction.RegisterHandler(_ => ShowOpenProjectView());
+            viewModel.ShowCreateProjectViewInteraction.RegisterHandler(_ => ShowCreateProjectView());
             newProjectVm?.CloseDialogInteraction.RegisterHandler(result =>
                 {
                     Close(result.Input);

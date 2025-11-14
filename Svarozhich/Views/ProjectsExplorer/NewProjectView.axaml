@@ -7,10 +7,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.ProjectsExplorer.NewProjectView"
              x:DataType="vm:NewProjectViewModel">
-    <UserControl.DataContext>
-        <vm:NewProjectViewModel/>
-    </UserControl.DataContext>
-    
     <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <ListBox Width="195" Height="250" SelectedIndex="0" SelectionMode="AlwaysSelected"

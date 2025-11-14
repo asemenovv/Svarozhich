@@ -43,8 +43,8 @@
                     </StackPanel>
                 </ToggleButton>
             </StackPanel>
-            <projectsExplorer:OpenProjectView Grid.Row="1" IsVisible="True" Name="OpenProjectView" />
-            <projectsExplorer:NewProjectView Grid.Row="1" IsVisible="False" Name="NewProjectView" />
+            <projectsExplorer:OpenProjectView DataContext="{Binding OpenProjectViewModel}" Grid.Row="1" IsVisible="True" Name="OpenProjectView" />
+            <projectsExplorer:NewProjectView DataContext="{Binding NewProjectViewModel}" Grid.Row="1" IsVisible="False" Name="NewProjectView" />
         </Grid>
     </Panel>
 </Window>

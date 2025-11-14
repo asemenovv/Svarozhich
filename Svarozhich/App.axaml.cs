@@ -39,7 +39,10 @@ public partial class App : Application
     {
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<MainWindow>();
+        
         services.AddSingleton<ProjectsExploreDialogViewModel>();
         services.AddSingleton<ProjectsExploreDialog>();
+        services.AddSingleton<NewProjectViewModel>();
+        services.AddSingleton<OpenProjectViewModel>();
     }
 }

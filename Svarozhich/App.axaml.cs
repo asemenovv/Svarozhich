@@ -5,6 +5,8 @@ using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Svarozhich.Services;
+using Svarozhich.Utils;
 using Svarozhich.ViewModels;
 using Svarozhich.ViewModels.ProjectsExplorer;
 using Svarozhich.Views;
@@ -44,5 +46,8 @@ public partial class App : Application
         services.AddSingleton<ProjectsExploreDialog>();
         services.AddSingleton<NewProjectViewModel>();
         services.AddSingleton<OpenProjectViewModel>();
+
+        services.AddSingleton<XmlSerializer>();
+        services.AddSingleton<ProjectsService>();
     }
 }

@@ -6,7 +6,7 @@ using Avalonia.Media.Imaging;
 namespace Svarozhich.Models;
 
 [DataContract(Name = "ProjectTemplate")]
-public class ProjectTemplateDto
+public class ProjectTemplate
 {
     [DataMember]
     public required string ProjectType { get; set; }
@@ -28,5 +28,10 @@ public class ProjectTemplateDto
         editorSystemPath.Attributes |= FileAttributes.Hidden;
         if (PreviewImagePath != null)
             File.Copy(PreviewImagePath, Path.Combine(editorSystemPath.FullName, "preview.png"));
+    }
+
+    public void LoadPreviewImage()
+    {
+        if (PreviewImagePath != null) PreviewImage = new Bitmap(PreviewImagePath);
     }
 }

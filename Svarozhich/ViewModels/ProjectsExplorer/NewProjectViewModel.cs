@@ -10,29 +10,30 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Svarozhich.Models;
+using Svarozhich.Services;
 using Svarozhich.Utils;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class NewProjectViewModel : ViewModelBase
 {
-    private readonly string _templatePath =
-        $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
+    private readonly ProjectsService _projectsService;
 
     [Reactive]
     public string ProjectName { get; set; } = "New Project";
     [Reactive]
     public string ProjectPath {  get; set; } = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/Projects/";
     [Reactive]
-    public ProjectTemplateDto? SelectedTemplate {  get; set; }
+    public ProjectTemplate? SelectedTemplate {  get; set; }
     
     public Interaction<Unit, string?> PickFolderInteraction { get; }
     public Interaction<ProjectExploreResult, Unit> CloseDialogInteraction { get; }
     public ReactiveCommand<Unit, Task> CreateCommand { get; }
-    public ObservableCollection<ProjectTemplateDto> ProjectTemplates { get; } = [];
+    public ObservableCollection<ProjectTemplate> ProjectTemplates { get; set; } = [];
 
-    public NewProjectViewModel()
+    public NewProjectViewModel(ProjectsService projectsService)
     {
+        _projectsService = projectsService;
         PickFolderInteraction = new Interaction<Unit, string?>();
         CloseDialogInteraction = new Interaction<ProjectExploreResult, Unit>();
         this.ValidationRule(vm => vm.ProjectName,
@@ -81,9 +82,7 @@ public class NewProjectViewModel : ViewModelBase
             }
 
             SelectedTemplate?.CreateFolders(projectHomePath);
-            var project = new Project(ProjectName, projectHomePath);
-            project.CreateScene("Default Scene");
-            project.Save(new XmlSerializer());
+            var project = _projectsService.Create(ProjectName, projectHomePath);
             await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
         } catch (Exception e)
         {
@@ -95,25 +94,7 @@ public class NewProjectViewModel : ViewModelBase
 
     private void LoadProjectTemplates()
     {
-        try
-        {
-            var templateFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
-            Debug.Assert(templateFiles.Length != 0);
-            foreach (var templateFile in templateFiles)
-            {
-                var serializer = new XmlSerializer();
-                var template = serializer.FromFile<ProjectTemplateDto>(templateFile);
-                if (template == null) continue;
-                template.PreviewImagePath = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
-                template.PreviewImage = new Bitmap(template.PreviewImagePath);
-                ProjectTemplates.Add(template);
-            }
-        }
-        catch (Exception e)
-        {
-            // TODO: Log error
-            Console.WriteLine(e);
-            throw;
-        }
+        ProjectTemplates = new ObservableCollection<ProjectTemplate>(_projectsService.LoadProjectTemplates());
+        foreach (var template in ProjectTemplates) template.LoadPreviewImage();
     }
 }

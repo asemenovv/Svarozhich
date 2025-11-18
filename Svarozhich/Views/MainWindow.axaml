@@ -3,22 +3,24 @@
         xmlns:vm="using:Svarozhich.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" 
+        xmlns:editors="clr-namespace:Svarozhich.Views.Controls.Editors"
+        mc:Ignorable="d"
         x:Class="Svarozhich.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        x:Name="RootWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Svarozhich" Width="1024" Height="768"
         Opened="Window_OnOpened">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
-    
+
     <Grid RowDefinitions="Auto,*,25" ColumnDefinitions="Auto,*">
-        <Menu Grid.Row="0" >
+        <Menu Grid.Row="0">
             <MenuItem Header="_File">
-                <MenuItem Header="Open Project"/>
-                <MenuItem Header="Save"/>
+                <MenuItem Header="Open Project" />
+                <MenuItem Header="Save" />
             </MenuItem>
             <MenuItem Header="_Scene" />
         </Menu>
@@ -27,58 +29,67 @@
             <DockControl.Factory>
                 <Factory HideToolsOnClose="True" HideDocumentsOnClose="True" />
             </DockControl.Factory>
-            
+
             <RootDock x:Name="Root" Id="Root" IsCollapsable="False" DefaultDockable="{Binding #MainLayout}">
                 <!-- <RootDock.Windows> -->
                 <!-- </RootDock.Windows> -->
-                
+
                 <ProportionalDock x:Name="MainLayout" Id="MainLayout" Orientation="Horizontal">
                     <ToolDock x:Name="LeftPane" Id="SceneExplorerPane" Proportion="0.25" Alignment="Left">
                         <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="Scene Explorer">
-                            <TextBlock Text="ECS"/>
+                            <TextBlock Text="ECS" />
                         </Tool>
                     </ToolDock>
-                
+
                     <ProportionalDockSplitter x:Name="LeftSplitter" Id="LeftSplitter" />
-                
+
                     <ProportionalDock x:Name="TopPane" Id="TopPane" Orientation="Vertical">
                         <ProportionalDock x:Name="RightPane" Id="RightPane" Orientation="Horizontal">
-                            <DocumentDock x:Name="DocumentsPane" Id="DocumentsPane" CanCreateDocument="True" ActiveDockable="Document1">
+                            <DocumentDock x:Name="DocumentsPane" Id="DocumentsPane" CanCreateDocument="True"
+                                          ActiveDockable="Document1">
                                 <DocumentDock.DocumentTemplate>
                                     <DocumentTemplate>
                                         <StackPanel x:DataType="Document">
-                                            <TextBlock Text="Title"/>
-                                            <TextBox Text="{Binding Title}"/>
-                                            <TextBlock Text="Context"/>
-                                            <TextBox Text="{Binding Context}" AcceptsReturn="True"/>
+                                            <TextBlock Text="Title" />
+                                            <TextBox Text="{Binding Title}" />
+                                            <TextBlock Text="Context" />
+                                            <TextBox Text="{Binding Context}" AcceptsReturn="True" />
                                         </StackPanel>
                                     </DocumentTemplate>
                                 </DocumentDock.DocumentTemplate>
-                                <Document x:Name="Document1" Id="Document1" Title="Program.cs" Context="" x:DataType="Document">
-                                    <TextBox Text="{Binding Context}" AcceptsReturn="True"/>
+                                <Document x:Name="Nodes" Id="Nodes1" Title="PostProcessing.nd" Context=""
+                                          x:DataType="Document">
+                                    <editors:NodeEditorView
+                                        DataContext="{Binding Path=DataContext.NodeEditorViewModel, ElementName=RootWindow, FallbackValue=NULL}"/>
                                 </Document>
-                                <Document x:Name="Document2" Id="Document2" Title="App.axaml" Context="" x:DataType="Document">
-                                    <TextBox Text="{Binding Context}" AcceptsReturn="True"/>
+                                <Document x:Name="Document1" Id="Document1" Title="Program.cs" Context=""
+                                          x:DataType="Document">
+                                    <TextBox Text="{Binding Context}" AcceptsReturn="True" />
+                                </Document>
+                                <Document x:Name="Document2" Id="Document2" Title="App.axaml" Context=""
+                                          x:DataType="Document">
+                                    <TextBox Text="{Binding Context}" AcceptsReturn="True" />
                                 </Document>
                             </DocumentDock>
-                        
+
                             <ProportionalDockSplitter x:Name="RightSplitter" Id="RightSplitter" />
-                        
+
                             <ToolDock x:Name="PropertiesPane" Id="PropertiesPane" Proportion="0.3" Alignment="Right">
                                 <Tool x:Name="Properties" Id="Properties" Title="Properties" x:DataType="Tool">
-                                    <TextBlock Text="{Binding Title}"/>
+                                    <TextBlock Text="{Binding Title}" />
                                 </Tool>
                             </ToolDock>
                         </ProportionalDock>
-                    
+
                         <ProportionalDockSplitter x:Name="BottomSplitter" Id="BottomSplitter" />
-                    
-                        <ToolDock x:Name="BottomPane" Id="BottomPane" Proportion="0.3" Alignment="Bottom" ActiveDockable="Output">
+
+                        <ToolDock x:Name="BottomPane" Id="BottomPane" Proportion="0.3" Alignment="Bottom"
+                                  ActiveDockable="Output">
                             <Tool x:Name="ErrorList" Id="ErrorList" Title="Error List" x:DataType="Tool">
-                                <TextBlock Text="{Binding Title}"/>
+                                <TextBlock Text="{Binding Title}" />
                             </Tool>
                             <Tool x:Name="Output" Id="Output" Title="Output" x:DataType="Tool">
-                                <TextBlock Text="{Binding Title}"/>
+                                <TextBlock Text="{Binding Title}" />
                             </Tool>
                         </ToolDock>
                     </ProportionalDock>
@@ -86,7 +97,7 @@
             </RootDock>
         </DockControl>
     </Grid>
-    
+
     <!--<DockPanel>
         <Rectangle Height="100" DockPanel.Dock="Top"/>
         <Rectangle Height="100" DockPanel.Dock="Bottom"/>

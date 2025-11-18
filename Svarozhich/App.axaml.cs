@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Svarozhich.Services;
 using Svarozhich.Utils;
 using Svarozhich.ViewModels;
+using Svarozhich.ViewModels.Controls.Editors;
 using Svarozhich.ViewModels.ProjectsExplorer;
 using Svarozhich.Views;
 using Svarozhich.Views.ProjectsExplorer;
@@ -46,6 +47,8 @@ public partial class App : Application
         services.AddSingleton<ProjectsExploreDialog>();
         services.AddSingleton<NewProjectViewModel>();
         services.AddSingleton<OpenProjectViewModel>();
+
+        services.AddSingleton<NodeEditorViewModel>();
 
         services.AddSingleton<XmlSerializer>();
         services.AddSingleton<ProjectsService>();

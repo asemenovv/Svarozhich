@@ -25,6 +25,10 @@ public class XmlSerializer : ISerializer
 
     public T? FromFile<T>(string path)
     {
+        if (!File.Exists(path))
+        {
+            return default(T);
+        }
         try
         {
             using var fs = new FileStream(path, FileMode.Open);

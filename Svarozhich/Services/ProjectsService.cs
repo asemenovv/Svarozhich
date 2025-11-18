@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Avalonia.Media.Imaging;
+using System.Linq;
 using Svarozhich.Models;
 using Svarozhich.Utils;
 
@@ -10,30 +10,43 @@ namespace Svarozhich.Services;
 
 public class ProjectsService
 {
-    private static readonly string ApplicationDataPath = Path.Combine(
-        $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}", "Svarozhich");
     private static readonly string TemplatePath =
         $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
-
-    private readonly string _projectsDataPath;
-    private ProjectDataList _projects = new();
+    
+    private readonly OpenedProjectData _openedProjects;
     private readonly XmlSerializer _serializer;
 
     public ProjectsService(XmlSerializer serializer)
     {
-        if (!Directory.Exists(ApplicationDataPath))
-        {
-            Directory.CreateDirectory(ApplicationDataPath);
-        }
-        _projectsDataPath = Path.Combine(ApplicationDataPath, "Projects.xml");
         _serializer  = serializer;
+        _openedProjects = OpenedProjectData.Load(serializer);
+        _openedProjects.Projects = _openedProjects.Projects
+            .Where(p => new Project(p.Name, p.Path).Validate())
+            .ToList();
+        _openedProjects.Projects.ForEach(p => p.LoadImages());
     }
 
-    public Project Create(string name, string path)
+    public Project Create(string name, string path, ProjectTemplate? template = null)
     {
         var project = new Project(name, path);
         project.CreateScene("Default Scene");
+        if (template != null)
+        {
+            project.InitFromTemplate(template);
+        }
+        else
+        {
+            throw new ArgumentException("Project template is not defined.");
+        }
         project.Save(_serializer);
+        return project;
+    }
+
+    public Project Open(string path)
+    {
+        var project = Project.OpenFolder(path, _serializer);
+        _openedProjects.MarkOpened(project);
+        _openedProjects.Save(_serializer);
         return project;
     }
 
@@ -50,5 +63,10 @@ public class ProjectsService
             templates.Add(template);
         }
         return templates;
+    }
+
+    public List<ProjectData> PreviouslyOpenedProjects()
+    {
+        return _openedProjects.Projects.OrderByDescending(x => x.LastOpenDate).ToList();
     }
 }

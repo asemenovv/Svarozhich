@@ -3,17 +3,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:projectsExplorer="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
+             xmlns:models="clr-namespace:Svarozhich.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.ProjectsExplorer.OpenProjectView"
              x:DataType="projectsExplorer:OpenProjectViewModel">
-    <UserControl.DataContext>
-        <projectsExplorer:OpenProjectViewModel/>
-    </UserControl.DataContext>
-    
     <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ListBox Width="195" Height="354"></ListBox>
-            <Border Width="400" Height="354" Margin="5, 0, 0, 0"></Border>
+            <ListBox Width="195" Height="354" SelectedIndex="0" SelectionMode="AlwaysSelected"
+                     ItemsSource="{Binding Projects}"
+                     SelectedItem="{Binding SelectedProject}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:ProjectData">
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Image Width="400" Height="250"
+                   Source="{Binding SelectedProject.PreviewImage, FallbackValue=''}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 30, 0, 0">
             <Button Content="Open" Width="96" HorizontalContentAlignment="Center" IsDefault="True"/>

@@ -1,17 +1,14 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Svarozhich.Models;
 using Svarozhich.Services;
-using Svarozhich.Utils;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
@@ -56,7 +53,9 @@ public class NewProjectViewModel : ViewModelBase
             "Project folder should be a valid path.");
         
         CreateCommand = ReactiveCommand.Create(CreateProject, ValidationContext.Valid);
-        LoadProjectTemplates();
+        
+        ProjectTemplates = new ObservableCollection<ProjectTemplate>(_projectsService.LoadProjectTemplates());
+        foreach (var template in ProjectTemplates) template.LoadPreviewImage();
     }
     
     public async Task PickFolderAsync()
@@ -73,28 +72,9 @@ public class NewProjectViewModel : ViewModelBase
 
     private async Task CreateProject()
     {
-        try
-        {
-            var projectHomePath = Path.Combine(ProjectPath, ProjectName);
-            if (!Directory.Exists(projectHomePath))
-            {
-                Directory.CreateDirectory(projectHomePath);
-            }
-
-            SelectedTemplate?.CreateFolders(projectHomePath);
-            var project = _projectsService.Create(ProjectName, projectHomePath);
-            await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
-        } catch (Exception e)
-        {
-            //TODO: Log exception
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    private void LoadProjectTemplates()
-    {
-        ProjectTemplates = new ObservableCollection<ProjectTemplate>(_projectsService.LoadProjectTemplates());
-        foreach (var template in ProjectTemplates) template.LoadPreviewImage();
+        var projectHomePath = Path.Combine(ProjectPath, ProjectName);
+        _projectsService.Create(ProjectName, projectHomePath, SelectedTemplate);
+        var project = _projectsService.Open(projectHomePath);
+        await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
     }
 }

@@ -47,7 +47,6 @@
     <ItemGroup>
       <Folder Include="Assets\Fonts\" />
       <Folder Include="Assets\Phosphor\" />
-      <Folder Include="Projects\" />
       <Folder Include="projects\" />
     </ItemGroup>
 </Project>

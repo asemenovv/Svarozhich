@@ -52,5 +52,6 @@ public partial class App : Application
 
         services.AddSingleton<XmlSerializer>();
         services.AddSingleton<ProjectsService>();
+        services.AddSingleton<ProgramGraphsService>();
     }
 }

@@ -1,0 +1,16 @@
+<Program xmlns="http://schemas.datacontract.org/2004/07/Svarozhich.Models"
+         xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    out = in * 2 ^ exposure
+    <Ports>
+        <Port type="Input" name="exposure" valueType="Constant" dataType="Float" dataTypeDimeentions="1,1" defaultValue="0.0"/>
+        <Port type="Input" name="inPixelColor" valueType="ContextVariable" dataType="Float" dataTypeDimeentions="1,3"/>
+        <Port type="Output" name="outPixelColor" valueType="ContextVariable" dataType="Float" dataTypeDimeentions="1,3"/>
+    </Ports>
+    <Nodes>
+        <Node id="1" type="Multiply" locationX="400" locationY="200">
+            <Inputs>
+                <Input name=""/> 
+            </Inputs>
+        </Node>
+    </Nodes>
+</Program>

@@ -53,6 +53,8 @@ public class NodeEditorViewModel : NodifyEditorViewModelBase
         {
             var from = ports[connection.From.Id];
             var to = ports[connection.To.Id];
+            from.IsConnected = true;
+            to.IsConnected = true;
             Connections.Add(new ConnectionViewModelBase(this, from, to, connection.Title));
         }
         // var knot1 = new KnotNodeViewModel()

@@ -9,10 +9,18 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.Controls.Editors.NodeEditorView"
              x:DataType="editors:NodeEditorViewModel">
-    <controls:NodifyEditor x:Name="Editor" Background="Transparent"
+    <Grid>
+        <StackPanel ZIndex="1" HorizontalAlignment="Left">
+            <!-- <Button Content="Switch Theme" Command="{Binding ChangeThemeCommand}"></Button> -->
+            <!-- <Button ZIndex="1" Content="new" Click="Button_OnClick"></Button> -->
+            <TextBlock Text="{Binding #Editor.SelectedItem}"></TextBlock>
+            <Slider Maximum="10" Minimum="0.1" Value="1" Name="Slider" Width="200"></Slider>
+        </StackPanel>
+        <controls:NodifyEditor x:Name="Editor" Background="Transparent"
                            ItemsSource="{Binding Nodes }"
                            Connections="{Binding Connections}"
                            PendingConnection="{Binding PendingConnection}"
+                           Zoom="{Binding #Slider.Value,Mode=TwoWay}"
                            DisconnectConnectorCommand="{Binding DisconnectConnectorCommand}">
         <controls:NodifyEditor.Resources>
             <converters:FlowToDirectionConverter x:Key="FlowToDirectionConverter" />
@@ -173,4 +181,5 @@
                 </controls:NodeTemplateSelector>
             </controls:NodifyEditor.ItemTemplate>
     </controls:NodifyEditor>
+    </Grid>
 </UserControl>

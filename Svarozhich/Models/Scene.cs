@@ -3,7 +3,7 @@ using Svarozhich.Utils;
 
 namespace Svarozhich.Models;
 
-public class Scene : PersistedEntity
+public class Scene : PersistedEntity<SceneDto>
 {
     private const string Extension = ".xml";
     private readonly Project _project;
@@ -18,13 +18,9 @@ public class Scene : PersistedEntity
         MarkDirty();
     }
 
-    public void Save(ISerializer serializer)
+    protected override string FilePath()
     {
-        if (IsDirty)
-        {
-            serializer.ToFile(ToDto(), _project.AbsolutePath(SceneFileLocalPath()));
-        }
-        MarkClean();
+        return _project.AbsolutePath(SceneFileLocalPath());
     }
 
     public SceneRefDto ToRefDto()
@@ -36,7 +32,7 @@ public class Scene : PersistedEntity
         };
     }
 
-    private SceneDto ToDto()
+    protected override SceneDto ToDto()
     {
         return new SceneDto
         {

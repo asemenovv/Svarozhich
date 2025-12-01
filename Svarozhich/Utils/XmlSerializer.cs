@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 
 namespace Svarozhich.Utils;
 
-public class XmlSerializer : ISerializer
+public class XmlSerializer<T> : ISerializer<T>
 {
-    public void ToFile<T>(T instance, string path)
+    public void ToFile(T instance, string path)
     {
         try
         {
@@ -23,7 +23,7 @@ public class XmlSerializer : ISerializer
         }
     }
 
-    public T? FromFile<T>(string path)
+    public T? FromFile(string path)
     {
         if (!File.Exists(path))
         {

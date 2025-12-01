@@ -1,8 +1,8 @@
 namespace Svarozhich.Utils;
 
-public interface ISerializer
+public interface ISerializer<T>
 {
-    public void ToFile<T>(T instance, string path);
+    public void ToFile(T instance, string path);
     
-    public T? FromFile<T>(string path);
+    public T? FromFile(string path);
 }

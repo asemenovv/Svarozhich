@@ -14,12 +14,11 @@ public class ProjectsService
         $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
     
     private readonly OpenedProjectData _openedProjects;
-    private readonly XmlSerializer _serializer;
+    public Project CurrentProject { get; private set; }
 
-    public ProjectsService(XmlSerializer serializer)
+    public ProjectsService()
     {
-        _serializer  = serializer;
-        _openedProjects = OpenedProjectData.Load(serializer);
+        _openedProjects = OpenedProjectData.Load(new XmlSerializer<OpenedProjectData>());
         _openedProjects.Projects = _openedProjects.Projects
             .Where(p => new Project(p.Name, p.Path).Validate())
             .ToList();
@@ -38,15 +37,20 @@ public class ProjectsService
         {
             throw new ArgumentException("Project template is not defined.");
         }
-        project.Save(_serializer);
+        project.Save(new XmlSerializer<ProjectBinding>());
+        foreach (var scene in project.Scenes)
+        {
+            scene.Save(new XmlSerializer<SceneDto>());
+        }
         return project;
     }
 
     public Project Open(string path)
     {
-        var project = Project.OpenFolder(path, _serializer);
+        var project = Project.OpenFolder(path, new XmlSerializer<ProjectBinding>());
         _openedProjects.MarkOpened(project);
-        _openedProjects.Save(_serializer);
+        _openedProjects.Save(new XmlSerializer<OpenedProjectData>());
+        CurrentProject  = project;
         return project;
     }
 
@@ -57,7 +61,7 @@ public class ProjectsService
         List<ProjectTemplate> templates = [];
         foreach (var templateFile in templateFiles)
         {
-            var template = _serializer.FromFile<ProjectTemplate>(templateFile);
+            var template = new XmlSerializer<ProjectTemplate>().FromFile(templateFile);
             if (template == null) continue;
             template.PreviewImagePath = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
             templates.Add(template);

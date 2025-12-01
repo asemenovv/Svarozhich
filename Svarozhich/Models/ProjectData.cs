@@ -27,7 +27,7 @@ public class ProjectData
 }
 
 [DataContract]
-public class OpenedProjectData : PersistedEntity
+public class OpenedProjectData : PersistedEntity<OpenedProjectData>
 {
     [DataMember(Name = "Projects")]
     public List<ProjectData> Projects { get; set; } = [];
@@ -62,18 +62,19 @@ public class OpenedProjectData : PersistedEntity
         }
         MarkDirty();
     }
-    
-    public void Save(ISerializer serializer)
+
+    protected override OpenedProjectData ToDto()
     {
-        if (IsDirty)
-        {
-            serializer.ToFile(this, ProjectsDataPath);
-        }
-        MarkClean();
+        return this;
     }
 
-    public static OpenedProjectData Load(XmlSerializer serializer)
+    protected override string FilePath()
     {
-        return serializer.FromFile<OpenedProjectData>(ProjectsDataPath) ?? new OpenedProjectData();
+        return ProjectsDataPath;
+    }
+
+    public static OpenedProjectData Load(ISerializer<OpenedProjectData> serializer)
+    {
+        return serializer.FromFile(ProjectsDataPath) ?? new OpenedProjectData();
     }
 }

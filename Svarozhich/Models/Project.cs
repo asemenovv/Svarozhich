@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Svarozhich.Models.Nodes;
+using Svarozhich.Models.ProgramGraph.Nodes;
 using Svarozhich.Utils;
 
 namespace Svarozhich.Models;
 
-public class Project : PersistedEntity
+public class Project : PersistedEntity<ProjectBinding>
 {
     private const string Extension = ".svch";
     private readonly List<Scene> _scenes = [];
@@ -45,30 +47,37 @@ public class Project : PersistedEntity
         return scene;
     }
 
-    public void Save(ISerializer serializer)
+    protected override string FilePath()
     {
-        if (IsDirty)
-        {
-            serializer.ToFile(ToDto(), ProjectFilePath());
-            foreach (var scene in Scenes)
-            {
-                scene.Save(serializer);
-            }
-        }
-        MarkClean();
+        return Path.Combine(RootFolder, $"{Name}{Extension}");
     }
 
     public string AbsolutePath(string projectLocalPath)
     {
         return Path.Combine(RootFolder, projectLocalPath);
     }
-
-    private string ProjectFilePath()
+    
+    public NodeGraph GetNodeGraph()
     {
-        return Path.Combine(RootFolder, $"{Name}{Extension}");
+        var nodeGraph = new NodeGraph(this);
+        
+        var inColorNode = new ConstantColorNode("Red-ish Color", new ColorRgb(1.0f, 0.1f, 0.1f));
+        var scalarNode = new ConstantScalarNode("Exposure", 2.0f);
+        var expScalarNode = new ExpScalarNode(2.2f);
+        var colorScalarMultiplyNode = new ColorScalarMultiplyNode();
+        
+        nodeGraph.AddNode(inColorNode);
+        nodeGraph.AddNode(scalarNode);
+        nodeGraph.AddNode(expScalarNode);
+        nodeGraph.AddNode(colorScalarMultiplyNode);
+        
+        nodeGraph.AddConnection(new Connection(inColorNode.OutputColorPort, colorScalarMultiplyNode.InputColorPort));
+        nodeGraph.AddConnection(new Connection(scalarNode.OutputScalarPort, expScalarNode.InputScalarPort));
+        nodeGraph.AddConnection(new Connection(expScalarNode.OutputScalarPort, colorScalarMultiplyNode.InputScalarPort));
+        return nodeGraph;
     }
 
-    private ProjectBinding ToDto()
+    protected override ProjectBinding ToDto()
     {
         var dto = new ProjectBinding
         {
@@ -92,7 +101,7 @@ public class Project : PersistedEntity
         selectedTemplate.CreateFolders(RootFolder);
     }
 
-    public static Project OpenFolder(string path, ISerializer serializer)
+    public static Project OpenFolder(string path, ISerializer<ProjectBinding> serializer)
     {
         var projectFiles = Directory.GetFiles(path, $"*{Extension}", SearchOption.TopDirectoryOnly);
         switch (projectFiles.Length)
@@ -103,7 +112,7 @@ public class Project : PersistedEntity
                 throw new ArgumentException($"Folder {path} contains more than one project file.");
         }
 
-        var projectBinding = serializer.FromFile<ProjectBinding>(projectFiles[0]);
+        var projectBinding = serializer.FromFile(projectFiles[0]);
         if (projectBinding == null)
         {
             throw new InvalidOperationException($"Project {projectFiles[0]} can not be loaded.");
@@ -121,7 +130,7 @@ public class Project : PersistedEntity
             return false;
         }
 
-        if (!File.Exists(ProjectFilePath()))
+        if (!File.Exists(FilePath()))
         {
             return false;
         }

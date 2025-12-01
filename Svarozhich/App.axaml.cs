@@ -49,9 +49,7 @@ public partial class App : Application
         services.AddSingleton<OpenProjectViewModel>();
 
         services.AddSingleton<NodeEditorViewModel>();
-
-        services.AddSingleton<XmlSerializer>();
+        
         services.AddSingleton<ProjectsService>();
-        services.AddSingleton<ProgramGraphsService>();
     }
 }

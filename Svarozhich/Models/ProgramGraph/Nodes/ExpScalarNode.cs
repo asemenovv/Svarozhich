@@ -2,48 +2,32 @@ using System;
 
 namespace Svarozhich.Models.Nodes;
 
-public class ColorScalarMultiplyNode : Node
+public class ExpScalarNode : Node
 {
-    public Port InputColorPort { get; }
     public Port InputScalarPort { get; }
-    public Port OutputColorPort { get; }
+    public Port OutputScalarPort { get; }
+    private readonly float _expBase;
 
-    public ColorScalarMultiplyNode() : base("Multiply")
+    public ExpScalarNode(float expBase = 1.0f) : base($"Exp{{{expBase}}}")
     {
-        InputColorPort = AddInput("Color", PortDataType.Color);
-        InputScalarPort = AddInput("Scalar", PortDataType.Float);
-        OutputColorPort = AddOutput("Color", PortDataType.Color);
+        InputScalarPort = AddInput("Input", PortDataType.Float);
+        OutputScalarPort = AddOutput("Output", PortDataType.Float);
+        _expBase = expBase;
     }
 
     public override object? EvaluateOutput(string outputPortName, EvaluationContext context)
     {
-        if (outputPortName != OutputColorPort.Name)
+        if (outputPortName != OutputScalarPort.Name)
             throw new ArgumentException($"Unknown output port: {outputPortName}", nameof(outputPortName));
         
         if (context.TryGetCached(this, outputPortName, out var cached))
             return cached;
         
-        var inColor = GetInputColor(InputColorPort, context);
         var scalar = GetInputScalar(InputScalarPort, context);
-        var result = inColor * scalar;
+        var result = Math.Pow(_expBase, scalar);
 
         context.SetCached(this, outputPortName, result);
         return result;
-    }
-
-    private ColorRgb GetInputColor(Port port, EvaluationContext context)
-    {
-        var connection = _nodeGraph.FindConnectionTo(port);
-        if (connection is null)
-            return new ColorRgb(0, 0, 0);
-
-        var sourceNode = connection.From.Owner;
-        var value = sourceNode.EvaluateOutput(connection.From.Name, context);
-
-        if (value is ColorRgb c)
-            return c;
-
-        throw new InvalidOperationException("Expected ColorRgb on input");
     }
 
     private float GetInputScalar(Port port, EvaluationContext context)

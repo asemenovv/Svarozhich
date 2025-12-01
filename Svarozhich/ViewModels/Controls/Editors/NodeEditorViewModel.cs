@@ -1,19 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia;
-using Avalonia.Controls;
 using NodifyM.Avalonia.ViewModelBase;
+using Svarozhich.Models.Nodes;
 using Svarozhich.Services;
 
 namespace Svarozhich.ViewModels.Controls.Editors;
 
 public class NodeEditorViewModel : NodifyEditorViewModelBase
 {
-    public NodeEditorViewModel(ProgramGraphsService programGraphsService)
+    private readonly ProjectsService _projectsService;
+
+    public NodeEditorViewModel(ProjectsService projectsService)
     {
-        var nodeGraph = programGraphsService.GetNodeGraph();
+        _projectsService = projectsService;
+        // Console.WriteLine(projectsService.CurrentProject.Name);
+    }
+
+    private void LoadGraph(NodeGraph nodeGraph)
+    {
+        Nodes.Clear();
+        Connections.Clear();
         var ports = new Dictionary<Guid, ConnectorViewModelBase>();
         foreach (var node in nodeGraph.Nodes)
         {
@@ -57,93 +65,5 @@ public class NodeEditorViewModel : NodifyEditorViewModelBase
             to.IsConnected = true;
             Connections.Add(new ConnectionViewModelBase(this, from, to, connection.Title));
         }
-        // var knot1 = new KnotNodeViewModel()
-        // {
-        //     Location = new Point(300, 100)
-        // };
-        // var input1 = new ConnectorViewModelBase()
-        // {
-        //     Title = "AS 1",
-        //     Flow = ConnectorViewModelBase.ConnectorFlow.Input
-        // };
-        // var output1 = new ConnectorViewModelBase()
-        // {
-        //     Title = "B 1",
-        //     Flow = ConnectorViewModelBase.ConnectorFlow.Output
-        // };
-        // Connections.Add(new ConnectionViewModelBase(this, output1, knot1.Connector, "Test"));
-        // Connections.Add(new ConnectionViewModelBase(this, knot1.Connector, input1));
-        // var node1 = new NodeViewModelBase()
-        // {
-        //     Location = new Point(400, 200),
-        //     Title = "Node 1",
-        //     Input =
-        //     [
-        //         input1,
-        //         new ComboBox()
-        //         {
-        //             ItemsSource = new ObservableCollection<object>
-        //             {
-        //                 "Item 1",
-        //                 "Item 2",
-        //                 "Item 3"
-        //             }
-        //         }
-        //     ],
-        //     Output =
-        //     [
-        //         new ConnectorViewModelBase()
-        //         {
-        //             Title = "Output 2",
-        //             Flow = ConnectorViewModelBase.ConnectorFlow.Output
-        //         }
-        //     ]
-        // };
-        // var sumNode = new NodeViewModelBase()
-        // {
-        //     Title = "SUM",
-        //     Location = new Point(-100, -100),
-        //     Input = new ObservableCollection<object>
-        //     {
-        //         new ConnectorViewModelBase()
-        //         {
-        //             Title = "A",
-        //             Flow = ConnectorViewModelBase.ConnectorFlow.Input
-        //         },
-        //         new ConnectorViewModelBase()
-        //         {
-        //             Title = "B",
-        //             Flow = ConnectorViewModelBase.ConnectorFlow.Input
-        //         }
-        //     },
-        //     Output = new ObservableCollection<object>
-        //     {
-        //         output1,
-        //         new ConnectorViewModelBase()
-        //         {
-        //             Flow = ConnectorViewModelBase.ConnectorFlow.Output,
-        //             Title = "Output 1"
-        //         },
-        //         new ConnectorViewModelBase()
-        //         {
-        //             Flow = ConnectorViewModelBase.ConnectorFlow.Output,
-        //             Title = "Output 2"
-        //         }
-        //     }
-        // };
-        // Nodes = [node1, sumNode, knot1];
-        // knot1.Connector.IsConnected = true;
-        // output1.IsConnected = true;
-        // input1.IsConnected = true;
-    }
-
-    public override void Connect(ConnectorViewModelBase source, ConnectorViewModelBase target)
-    {
-        base.Connect(source, target);
-    }
-
-    public override void DisconnectConnector(ConnectorViewModelBase connector)
-    {
-        base.DisconnectConnector(connector);
     }
 }

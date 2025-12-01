@@ -1,20 +1,23 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Svarozhich.Models;
+using Svarozhich.Models.Events;
 using Svarozhich.Services;
+using Unit = System.Reactive.Unit;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class NewProjectViewModel : ViewModelBase
 {
     private readonly ProjectsService _projectsService;
+    private readonly IMediator _mediator;
 
     [Reactive]
     public string ProjectName { get; set; } = "New Project";
@@ -28,9 +31,10 @@ public class NewProjectViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task> CreateCommand { get; }
     public ObservableCollection<ProjectTemplate> ProjectTemplates { get; set; } = [];
 
-    public NewProjectViewModel(ProjectsService projectsService)
+    public NewProjectViewModel(ProjectsService projectsService, IMediator mediator)
     {
         _projectsService = projectsService;
+        _mediator = mediator;
         PickFolderInteraction = new Interaction<Unit, string?>();
         CloseDialogInteraction = new Interaction<ProjectExploreResult, Unit>();
         this.ValidationRule(vm => vm.ProjectName,
@@ -75,6 +79,7 @@ public class NewProjectViewModel : ViewModelBase
         var projectHomePath = Path.Combine(ProjectPath, ProjectName);
         _projectsService.Create(ProjectName, projectHomePath, SelectedTemplate);
         var project = _projectsService.Open(projectHomePath);
+        await _mediator.Publish(new ProjectOpenedEvent(project));
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
     }
 }

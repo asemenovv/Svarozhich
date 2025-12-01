@@ -9,7 +9,7 @@
         x:DataType="vm:MainWindowViewModel"
         x:Name="RootWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Svarozhich" Width="1024" Height="768"
+        Title="{Binding WindowTitle}" Width="1024" Height="768"
         Opened="Window_OnOpened">
 
     <Design.DataContext>
@@ -18,7 +18,7 @@
 
     <Grid RowDefinitions="Auto,*,25" ColumnDefinitions="Auto,*">
         <Menu Grid.Row="0">
-            <MenuItem Header="_File">
+            <MenuItem Header="{Binding WindowTitle}">
                 <MenuItem Header="Open Project" />
                 <MenuItem Header="Save" />
             </MenuItem>
@@ -36,7 +36,7 @@
 
                 <ProportionalDock x:Name="MainLayout" Id="MainLayout" Orientation="Horizontal">
                     <ToolDock x:Name="LeftPane" Id="SceneExplorerPane" Proportion="0.25" Alignment="Left">
-                        <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="Scene Explorer">
+                        <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="{Binding DataContext.WindowTitle, ElementName=RootWindow}">
                             <TextBlock Text="ECS" />
                         </Tool>
                     </ToolDock>
@@ -97,22 +97,4 @@
             </RootDock>
         </DockControl>
     </Grid>
-
-    <!--<DockPanel>
-        <Rectangle Height="100" DockPanel.Dock="Top"/>
-        <Rectangle Height="100" DockPanel.Dock="Bottom"/>
-        
-        ~1~ <TreeView DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Scene.Entities}"> @1@
-            ~1~ <TreeView.ItemTemplate> @1@
-                ~1~ <TreeDataTemplate ItemsSource="{Binding SubNodes}"> @1@
-                    ~1~ <TextBlock Text="{Binding Title}"></TextBlock> @1@
-                ~1~ </TreeDataTemplate> @1@
-            ~1~ </TreeView.ItemTemplate> @1@
-        ~1~ </TreeView> @1@
-        
-        <StackPanel Width="250" DockPanel.Dock="Right"/>
-        <StackPanel>
-            <TextBlock Text="Hello"></TextBlock>
-        </StackPanel>
-    </DockPanel>-->
 </Window>

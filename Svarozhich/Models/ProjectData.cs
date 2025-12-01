@@ -12,9 +12,9 @@ namespace Svarozhich.Models;
 public class ProjectData
 {
     [DataMember(Name = "Name")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     [DataMember(Name = "Path")]
-    public string Path { get; set; }
+    public required string Path { get; set; }
     [DataMember(Name = "LastOpened")]
     public DateTime LastOpenDate { get; set; }
     [IgnoreDataMember]

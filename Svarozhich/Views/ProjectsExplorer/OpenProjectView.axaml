@@ -22,7 +22,8 @@
                    Source="{Binding SelectedProject.PreviewImage, FallbackValue=''}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 30, 0, 0">
-            <Button Content="Open" Width="96" HorizontalContentAlignment="Center" IsDefault="True"/>
+            <Button Content="Open" Width="96" HorizontalContentAlignment="Center" IsDefault="True"
+                    Command="{Binding OpenProject}"/>
             <Button Content="Exit" Width="96" HorizontalContentAlignment="Center" Margin="30, 0, 0, 0"
                     Command="{Binding CloseDialog}"/>
         </StackPanel>

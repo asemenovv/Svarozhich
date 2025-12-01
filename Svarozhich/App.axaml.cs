@@ -1,12 +1,10 @@
 using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Svarozhich.Services;
-using Svarozhich.Utils;
 using Svarozhich.ViewModels;
 using Svarozhich.ViewModels.Controls.Editors;
 using Svarozhich.ViewModels.ProjectsExplorer;
@@ -51,5 +49,11 @@ public partial class App : Application
         services.AddSingleton<NodeEditorViewModel>();
         
         services.AddSingleton<ProjectsService>();
+        
+        services.AddMediatR(cfg => 
+        {
+            // cfg.RegisterServicesFromAssembly(typeof(App).Assembly);
+        });
+        services.AddLogging(builder => builder.AddConsole());
     }
 }

@@ -15,7 +15,7 @@ namespace Svarozhich;
 
 public partial class App : Application
 {
-    public static IServiceProvider Services { get; private set; } = null!;
+    private static IServiceProvider Services { get; set; } = null!;
     
     public override void Initialize()
     {
@@ -52,7 +52,7 @@ public partial class App : Application
         
         services.AddMediatR(cfg => 
         {
-            // cfg.RegisterServicesFromAssembly(typeof(App).Assembly);
+            cfg.RegisterServicesFromAssembly(typeof(App).Assembly);
         });
         services.AddLogging(builder => builder.AddConsole());
     }

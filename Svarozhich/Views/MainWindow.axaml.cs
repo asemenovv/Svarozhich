@@ -18,7 +18,6 @@ public partial class MainWindow : Window
         _projectsExploreDialog = projectsExploreDialog;
         _mediator = mediator;
         InitializeComponent();
-        Console.Out.WriteLine($"Window ViewModel {viewModel.InstanceId.ToString()}");
         DataContext = viewModel;
     }
 

@@ -136,4 +136,10 @@ public class Project : PersistedEntity<ProjectBinding>
         }
         return true;
     }
+
+    public void Rename(string newName)
+    {
+        Name = newName.Trim();
+        MarkDirty();
+    }
 }

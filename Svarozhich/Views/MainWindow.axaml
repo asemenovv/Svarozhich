@@ -18,7 +18,7 @@
 
     <Grid RowDefinitions="Auto,*,25" ColumnDefinitions="Auto,*">
         <Menu Grid.Row="0">
-            <MenuItem Header="{Binding WindowTitle}">
+            <MenuItem Header="_File">
                 <MenuItem Header="Open Project" />
                 <MenuItem Header="Save" />
             </MenuItem>
@@ -36,7 +36,7 @@
 
                 <ProportionalDock x:Name="MainLayout" Id="MainLayout" Orientation="Horizontal">
                     <ToolDock x:Name="LeftPane" Id="SceneExplorerPane" Proportion="0.25" Alignment="Left">
-                        <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="{Binding DataContext.WindowTitle, ElementName=RootWindow}">
+                        <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="Scene Explorer">
                             <TextBlock Text="ECS" />
                         </Tool>
                     </ToolDock>

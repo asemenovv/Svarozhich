@@ -1,8 +1,9 @@
-﻿using System;
+﻿using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
 using Svarozhich.Models.Events;
@@ -10,31 +11,39 @@ using Svarozhich.ViewModels.Controls.Editors;
 
 namespace Svarozhich.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase, INotificationHandler<ProjectOpenedEvent>
+public class ProjectOpenedHandler(MainWindowViewModel viewModel, ILogger<ProjectOpenedHandler> logger) : INotificationHandler<ProjectOpenedEvent>
 {
-    private readonly ILogger<MainWindowViewModel> _logger;
-
-    [Reactive]
-    public Project Project { get; set; }
-    [Reactive]
-    public string WindowTitle { get; set; } = "Svarozhich???";
-    
-    public Guid InstanceId { get; } = Guid.NewGuid();
-    
-    public NodeEditorViewModel NodeEditorViewModel { get; }
-
-    public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, ILogger<MainWindowViewModel> logger)
-    {
-        NodeEditorViewModel = nodeEditorViewModel;
-        _logger = logger;
-        _logger.LogInformation($"{InstanceId} Created");
-    }
-
     public Task Handle(ProjectOpenedEvent notification, CancellationToken cancellationToken)
     {
-        Project = notification.Project;
-        WindowTitle = $"Svarozhich - {Project.Name}";
-        _logger.LogInformation("{InstanceId} Project {ProjectName} Opened", InstanceId.ToString(), notification.Project.Name);
+        viewModel.Project = notification.Project;
+        logger.LogInformation("Project {ProjectName} Opened", notification.Project.Name);
         return Task.CompletedTask;
+    }
+}
+
+public class MainWindowViewModel : ViewModelBase
+{
+    [Reactive]
+    public Project? Project { get; set; }
+
+    [ObservableAsProperty]
+    public string WindowTitle  { get; }
+
+    public NodeEditorViewModel NodeEditorViewModel { get; }
+
+    public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel)
+    {
+        NodeEditorViewModel = nodeEditorViewModel;
+        this.WhenAnyValue(vm => vm.Project)
+            .Select(p => p is null ? "Svarozhich" : $"Svarozhich - {p.Name}")
+            .ToPropertyEx(this, vm => vm.WindowTitle);
+    }
+
+    public void RenameProject(string newName)
+    {
+        if (Project is null) return;
+
+        Project.Rename(newName);
+        this.RaisePropertyChanged(nameof(WindowTitle));
     }
 }

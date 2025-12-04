@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Svarozhich.Models.Commands;
 using Svarozhich.Services;
 using Svarozhich.ViewModels;
 using Svarozhich.ViewModels.Controls.Editors;
@@ -49,6 +50,7 @@ public partial class App : Application
         services.AddSingleton<NodeEditorViewModel>();
         
         services.AddSingleton<ProjectsService>();
+        services.AddSingleton<UndoRedoService>();
         
         services.AddMediatR(cfg => 
         {

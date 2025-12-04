@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
+using Svarozhich.Models.Commands;
 using Svarozhich.Models.Events;
 using Svarozhich.ViewModels.Controls.Editors;
 
@@ -23,6 +24,8 @@ public class ProjectOpenedHandler(MainWindowViewModel viewModel, ILogger<Project
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private readonly UndoRedoService _undoRedoService;
+
     [Reactive]
     public Project? Project { get; set; }
 
@@ -31,8 +34,9 @@ public class MainWindowViewModel : ViewModelBase
 
     public NodeEditorViewModel NodeEditorViewModel { get; }
 
-    public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel)
+    public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, UndoRedoService undoRedoService)
     {
+        _undoRedoService = undoRedoService;
         NodeEditorViewModel = nodeEditorViewModel;
         this.WhenAnyValue(vm => vm.Project)
             .Select(p => p is null ? "Svarozhich" : $"Svarozhich - {p.Name}")
@@ -43,7 +47,8 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (Project is null) return;
 
-        Project.Rename(newName);
+        var op = new RenameProjectOperation(Project, newName);
+        _undoRedoService.Do(op);
         this.RaisePropertyChanged(nameof(WindowTitle));
     }
 }

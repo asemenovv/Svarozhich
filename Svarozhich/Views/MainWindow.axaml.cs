@@ -1,7 +1,5 @@
 using System;
 using Avalonia.Controls;
-using MediatR;
-using Svarozhich.Models.Events;
 using Svarozhich.ViewModels;
 using Svarozhich.ViewModels.ProjectsExplorer;
 using Svarozhich.Views.ProjectsExplorer;
@@ -11,12 +9,10 @@ namespace Svarozhich.Views;
 public partial class MainWindow : Window
 {
     private readonly ProjectsExploreDialog _projectsExploreDialog;
-    private readonly IMediator _mediator;
 
-    public MainWindow(MainWindowViewModel viewModel, ProjectsExploreDialog projectsExploreDialog, IMediator mediator)
+    public MainWindow(MainWindowViewModel viewModel, ProjectsExploreDialog projectsExploreDialog)
     {
         _projectsExploreDialog = projectsExploreDialog;
-        _mediator = mediator;
         InitializeComponent();
         DataContext = viewModel;
     }

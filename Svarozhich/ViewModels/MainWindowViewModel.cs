@@ -9,6 +9,7 @@ using Svarozhich.Models;
 using Svarozhich.Models.Commands;
 using Svarozhich.Models.Events;
 using Svarozhich.ViewModels.Controls.Editors;
+using Unit = System.Reactive.Unit;
 
 namespace Svarozhich.ViewModels;
 
@@ -24,7 +25,9 @@ public class ProjectOpenedHandler(MainWindowViewModel viewModel, ILogger<Project
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly UndoRedoService _undoRedoService;
+    public UndoRedoService UndoRedo { get; private set; }
+    public ReactiveCommand<Unit, Unit> UndoCommand { get; }
+    public ReactiveCommand<Unit, Unit> RedoCommand { get; }
 
     [Reactive]
     public Project? Project { get; set; }
@@ -36,11 +39,19 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, UndoRedoService undoRedoService)
     {
-        _undoRedoService = undoRedoService;
+        UndoRedo = undoRedoService;
         NodeEditorViewModel = nodeEditorViewModel;
         this.WhenAnyValue(vm => vm.Project)
             .Select(p => p is null ? "Svarozhich" : $"Svarozhich - {p.Name}")
             .ToPropertyEx(this, vm => vm.WindowTitle);
+        UndoCommand = ReactiveCommand.Create(
+            () => UndoRedo.Undo(),
+            this.WhenAnyValue(vm => vm.UndoRedo.CanUndo)
+        );
+        RedoCommand = ReactiveCommand.Create(
+            () => UndoRedo.Redo(),
+            this.WhenAnyValue(vm => vm.UndoRedo.CanRedo)
+        );
     }
 
     public void RenameProject(string newName)
@@ -48,7 +59,7 @@ public class MainWindowViewModel : ViewModelBase
         if (Project is null) return;
 
         var op = new RenameProjectOperation(Project, newName);
-        _undoRedoService.Do(op);
+        UndoRedo.Do(op);
         this.RaisePropertyChanged(nameof(WindowTitle));
     }
 }

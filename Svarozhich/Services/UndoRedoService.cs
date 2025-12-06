@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ReactiveUI.Fody.Helpers;
 
 namespace Svarozhich.Models.Commands;
 
@@ -6,9 +7,10 @@ public class UndoRedoService
 {
     private readonly Stack<IUndoableOperation> _undoStack = new();
     private readonly Stack<IUndoableOperation> _redoStack = new();
-    
-    public bool CanUndo { get; private set; }
 
+    [Reactive]
+    public bool CanUndo { get; private set; }
+    [Reactive]
     public bool CanRedo { get; private set; }
 
     public void Do(IUndoableOperation op)

@@ -6,6 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="530"
         x:Class="Svarozhich.Views.ProjectsExplorer.ProjectsExploreDialog"
         xmlns:vm="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
         x:DataType="vm:ProjectsExploreDialogViewModel"
         WindowStartupLocation="CenterScreen" CanResize="False"
         Title="Projects Explorer" Width="800" Height="550"
@@ -31,14 +32,14 @@
                 <ToggleButton x:Name="OpenProjectButton" IsChecked="True" Margin="0"
                               Command="{Binding ShowOpenProjectView}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Image Source="{SvgImage /Assets/Phosphor/SVGs/duotone/folder-open-duotone.svg}" />
+                        <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderOpen, Brush=DarkBlue}"/>
                         <TextBlock Text="Open Project" />
                     </StackPanel>
                 </ToggleButton>
                 <ToggleButton x:Name="CreateProjectButton" IsChecked="False" Margin="30 0 0 0"
                               Command="{Binding ShowCreateProjectView}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Image Source="{SvgImage /Assets/Phosphor/SVGs/duotone/folder-plus-duotone.svg}" />
+                        <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderPlus, Brush=DarkBlue}"/>
                         <TextBlock Text="Create Project" />
                     </StackPanel>
                 </ToggleButton>

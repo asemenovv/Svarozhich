@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:editors="clr-namespace:Svarozhich.Views.Controls.Editors"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+        xmlns:docks="clr-namespace:Svarozhich.Views.Docks"
         mc:Ignorable="d"
         x:Class="Svarozhich.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -26,13 +28,13 @@
                 <MenuItem Header="Undo" Command="{Binding UndoCommand}"
                           IsEnabled="{Binding UndoRedo.CanUndo}">
                     <MenuItem.Icon>
-                        <Image Source="{SvgImage /Assets/Phosphor/SVGs/regular/arrow-u-left-down.svg}" />
+                        <Image Source="{iconPacks:PhosphorIconsImage Kind=ArrowULeftDown, Brush=LightSkyBlue}"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="Redo" Command="{Binding RedoCommand}"
                           IsEnabled="{Binding UndoRedo.CanRedo}">
                     <MenuItem.Icon>
-                        <Image Source="{SvgImage /Assets/Phosphor/SVGs/regular/arrow-u-right-down.svg}" />
+                        <Image Source="{iconPacks:PhosphorIconsImage Kind=ArrowURightDown, Brush=LightSkyBlue}"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -49,11 +51,19 @@
                 <!-- </RootDock.Windows> -->
 
                 <ProportionalDock x:Name="MainLayout" Id="MainLayout" Orientation="Horizontal">
-                    <ToolDock x:Name="LeftPane" Id="SceneExplorerPane" Proportion="0.25" Alignment="Left">
-                        <Tool x:Name="SceneExplorer" Id="SceneExplorer" Title="Scene Explorer">
-                            <TextBlock Text="ECS" />
-                        </Tool>
-                    </ToolDock>
+                    <ProportionalDock x:Name="LeftPane" Orientation="Vertical" Proportion="0.25">
+                        <ToolDock Proportion="0.6">
+                            <Tool Title="Scene Explorer">
+                                <TextBlock Text="ECS" />
+                            </Tool>
+                        </ToolDock>
+                        <ProportionalDockSplitter/>
+                        <ToolDock Proportion="0.4">
+                            <Tool Title="Files Explorer">
+                                <TextBlock Text="Files" />
+                            </Tool>
+                        </ToolDock>
+                    </ProportionalDock>
 
                     <ProportionalDockSplitter x:Name="LeftSplitter" Id="LeftSplitter" />
 
@@ -85,14 +95,6 @@
                                     <TextBox Text="{Binding Context}" AcceptsReturn="True" />
                                 </Document>
                             </DocumentDock>
-
-                            <ProportionalDockSplitter x:Name="RightSplitter" Id="RightSplitter" />
-
-                            <ToolDock x:Name="PropertiesPane" Id="PropertiesPane" Proportion="0.3" Alignment="Right">
-                                <Tool x:Name="Properties" Id="Properties" Title="Properties" x:DataType="Tool">
-                                    <TextBlock Text="{Binding Title}" />
-                                </Tool>
-                            </ToolDock>
                         </ProportionalDock>
 
                         <ProportionalDockSplitter x:Name="BottomSplitter" Id="BottomSplitter" />
@@ -107,6 +109,14 @@
                             </Tool>
                         </ToolDock>
                     </ProportionalDock>
+                    
+                    <ProportionalDockSplitter x:Name="RightSplitter" Id="RightSplitter" />
+                    
+                    <ToolDock x:Name="InspectorPane" Id="InspectorPane" Proportion="0.3" Alignment="Right">
+                        <Tool x:Name="Inspector" Id="Inspector" Title="Inspector" x:DataType="Tool">
+                            <docks:InspectorPanel/>
+                        </Tool>
+                    </ToolDock>
                 </ProportionalDock>
             </RootDock>
         </DockControl>

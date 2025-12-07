@@ -7,10 +7,10 @@
     </Design.PreviewWith>
     
     <Style Selector="ToolChromeControl Grid#PART_Grip">
-        <Setter Property="Background" Value="BlueViolet"/>
+        <Setter Property="Background" Value="DimGray"/>
     </Style>
     <Style Selector="ToolChromeControl:active Grid#PART_Grip">
-        <Setter Property="Background" Value="Yellow"/>
+        <Setter Property="Background" Value="SlateGray"/>
     </Style>
         
     <!--<Style Selector="DocumentControl">

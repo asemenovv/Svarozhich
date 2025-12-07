@@ -29,14 +29,14 @@
         </ExperimentalAcrylicBorder>
         <Grid ColumnDefinitions="*" RowDefinitions="Auto, *">
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20" HorizontalAlignment="Center">
-                <ToggleButton x:Name="OpenProjectButton" IsChecked="True" Margin="0"
+                <ToggleButton Classes="ProjectOpen" x:Name="OpenProjectButton" IsChecked="True" Margin="0"
                               Command="{Binding ShowOpenProjectView}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderOpen, Brush=DarkBlue}"/>
                         <TextBlock Text="Open Project" />
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton x:Name="CreateProjectButton" IsChecked="False" Margin="30 0 0 0"
+                <ToggleButton Classes="ProjectOpen" x:Name="CreateProjectButton" IsChecked="False" Margin="30 0 0 0"
                               Command="{Binding ShowCreateProjectView}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderPlus, Brush=DarkBlue}"/>

@@ -47,18 +47,18 @@ public class OpenedProjectData : PersistedEntity<OpenedProjectData>
 
     public void MarkOpened(Project project)
     {
-        if (Projects.All(p => p.Path != project.RootFolder))
+        if (Projects.All(p => p.Path != project.RootProjectFolder.FullPath))
         {
             Projects.Add(new ProjectData()
             {
-                Path = project.RootFolder,
+                Path = project.RootProjectFolder.FullPath,
                 Name = project.Name,
                 LastOpenDate = DateTime.Now
             });
         }
         else
         {
-            Projects.First(p => p.Path == project.RootFolder).LastOpenDate = DateTime.Now;
+            Projects.First(p => p.Path == project.RootProjectFolder.FullPath).LastOpenDate = DateTime.Now;
         }
         MarkDirty();
     }

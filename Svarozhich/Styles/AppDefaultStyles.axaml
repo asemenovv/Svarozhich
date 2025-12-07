@@ -16,7 +16,7 @@
         <Setter Property="FontFamily" Value="Inter"></Setter>
     </Style>
 
-    <Style Selector="ToggleButton">
+    <Style Selector="ToggleButton.ProjectOpen">
         <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}"></Setter>
         <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"></Setter>

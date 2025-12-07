@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models.Nodes;
 using Svarozhich.Models.ProgramGraph.Nodes;
 using Svarozhich.Utils;
@@ -10,53 +13,55 @@ namespace Svarozhich.Models;
 
 public class Project : PersistedEntity<ProjectBinding>
 {
-    private const string Extension = ".svch";
-    private readonly List<Scene> _scenes = [];
+    [Reactive]
     public string Name { get; private set; }
-    public string RootFolder { get; set; }
-
-    public IReadOnlyList<Scene> Scenes => _scenes.AsReadOnly();
+    [Reactive]
+    public ProjectFileNode RootProjectFolder { get; private set; }
     
-    public Project(string name, string rootFolder, List<KeyValuePair<string, string>>? scenes = null)
+    public ObservableCollection<Scene> Scenes { get; } = [];
+    
+    public Project(string name, ProjectFileNode rootFolder, List<KeyValuePair<string, string>>? scenes = null)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
         }
 
-        if (string.IsNullOrWhiteSpace(rootFolder))
+        if (!rootFolder.Valid())
         {
-            throw new ArgumentException("Root folder cannot be null or whitespace.", nameof(rootFolder));
+            throw new ArgumentException("Root folder should exist.", nameof(rootFolder));
         }
         Name = name.Trim();
-        RootFolder = rootFolder.Trim();
-        if (scenes != null) _scenes = scenes.Select(s => new Scene(this, s.Key, s.Value)).ToList();
+        RootProjectFolder = rootFolder;
+        if (scenes != null) Scenes = new ObservableCollection<Scene>(scenes
+            .Select(s => new Scene(this, s.Key, s.Value))
+        );
         MarkDirty();
     }
 
     public Scene CreateScene(string name, string projectFolder = "Scenes/")
     {
-        if (_scenes.Any(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+        if (Scenes.Any(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
         {
             throw new ArgumentException($"Scene with name {name} already exists in Project {Name}.", nameof(name));
         }
 
         var scene = new Scene(this, name, projectFolder);
-        _scenes.Add(scene);
+        Scenes.Add(scene);
         MarkDirty();
         return scene;
     }
 
     protected override string FilePath()
     {
-        return Path.Combine(RootFolder, $"{Name}{Extension}");
+        return RootProjectFolder.Child($"{Name}{ProjectFileNodeType.ProjectFile.GetExtension()}").FullPath;
     }
 
     public string AbsolutePath(string projectLocalPath)
     {
-        return Path.Combine(RootFolder, projectLocalPath);
+        return Path.Combine(RootProjectFolder.FullPath, projectLocalPath);
     }
-    
+
     public NodeGraph GetNodeGraph()
     {
         var nodeGraph = new NodeGraph(this);
@@ -82,42 +87,42 @@ public class Project : PersistedEntity<ProjectBinding>
         var dto = new ProjectBinding
         {
             Name = Name,
-            RootFolder = RootFolder,
-            Scenes = _scenes.Select(s => s.ToRefDto()).ToList()
+            RootFolder = RootProjectFolder.FullPath,
+            Scenes = Scenes.Select(s => s.ToRefDto()).ToList()
         };
         return dto;
     }
 
     public void InitFromTemplate(ProjectTemplate selectedTemplate)
     {
-        if (!Directory.Exists(RootFolder))
+        if (!Directory.Exists(RootProjectFolder.FullPath))
         {
-            Directory.CreateDirectory(RootFolder);
+            Directory.CreateDirectory(RootProjectFolder.FullPath);
         }
         else
         {
             throw new InvalidOperationException("Project has been already initialized.");
         }
-        selectedTemplate.CreateFolders(RootFolder);
+        selectedTemplate.CreateFolders(RootProjectFolder.FullPath);
     }
 
-    public static Project OpenFolder(string path, ISerializer<ProjectBinding> serializer)
+    public static Project OpenFolder(ProjectFileNode rootFolder, ISerializer<ProjectBinding> serializer)
     {
-        var projectFiles = Directory.GetFiles(path, $"*{Extension}", SearchOption.TopDirectoryOnly);
-        switch (projectFiles.Length)
+        var projectFiles = rootFolder.LookupFiles(ProjectFileNodeType.ProjectFile);
+        switch (projectFiles.Count)
         {
             case 0:
-                throw new ArgumentException($"Folder {path} is not valid.");
+                throw new ArgumentException($"Folder {rootFolder} is not valid.");
             case > 1:
-                throw new ArgumentException($"Folder {path} contains more than one project file.");
+                throw new ArgumentException($"Folder {rootFolder} contains more than one project file.");
         }
 
-        var projectBinding = serializer.FromFile(projectFiles[0]);
+        var projectBinding = serializer.FromFile(projectFiles[0].FullPath);
         if (projectBinding == null)
         {
             throw new InvalidOperationException($"Project {projectFiles[0]} can not be loaded.");
         }
-        var project = new Project(projectBinding.Name, projectBinding.RootFolder,
+        var project = new Project(projectBinding.Name, rootFolder,
             projectBinding.Scenes.Select(s => new KeyValuePair<string, string>(s.Name, s.Path)).ToList());
         project.MarkClean();
         return project;
@@ -125,7 +130,7 @@ public class Project : PersistedEntity<ProjectBinding>
 
     public bool Validate()
     {
-        if (!Directory.Exists(RootFolder))
+        if (!Directory.Exists(RootProjectFolder.FullPath))
         {
             return false;
         }

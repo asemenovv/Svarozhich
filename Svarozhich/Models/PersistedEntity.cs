@@ -1,10 +1,11 @@
 using System.Runtime.Serialization;
+using ReactiveUI;
 using Svarozhich.Utils;
 
 namespace Svarozhich.Models;
 
 [DataContract]
-public abstract class PersistedEntity<T>
+public abstract class PersistedEntity<T> : ReactiveObject
 {
     [IgnoreDataMember]
     protected bool IsDirty { get; private set; }

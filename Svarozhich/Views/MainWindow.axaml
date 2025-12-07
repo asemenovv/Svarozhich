@@ -6,6 +6,7 @@
         xmlns:editors="clr-namespace:Svarozhich.Views.Controls.Editors"
         xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:docks="clr-namespace:Svarozhich.Views.Docks"
+        xmlns:models="clr-namespace:Svarozhich.Models"
         mc:Ignorable="d"
         x:Class="Svarozhich.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -60,7 +61,27 @@
                         <ProportionalDockSplitter/>
                         <ToolDock Proportion="0.4">
                             <Tool Title="Files Explorer">
-                                <TextBlock Text="Files" />
+                                <TreeView ItemsSource="{Binding Path=DataContext.Project.RootProjectFolder.Children, ElementName=RootWindow, FallbackValue=NULL}">
+                                    <TreeView.Styles>
+                                        <Style Selector="TreeViewItem">
+                                            <Setter Property="Padding" Value="2,0" />
+                                            <Setter Property="Margin" Value="0" />
+                                            <Setter Property="MinHeight" Value="22" />
+                                            <!-- <Setter Property="HorizontalContentAlignment" Value="Stretch" /> -->
+                                        </Style>
+                                    </TreeView.Styles>
+                                    
+                                    <TreeView.ItemTemplate>
+                                        <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="models:ProjectFileNode">
+                                            <StackPanel Orientation="Horizontal" Spacing="4" Height="16">
+                                                <iconPacks:PackIconPhosphorIcons Kind="{Binding NodeType, Converter={StaticResource FileTypeToIconConverter}}"
+                                                        Foreground="{Binding NodeType, Converter={StaticResource FileTypeToIconColorConverter}}"
+                                                        Width="16" Height="16"/>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </TreeDataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
                             </Tool>
                         </ToolDock>
                     </ProportionalDock>

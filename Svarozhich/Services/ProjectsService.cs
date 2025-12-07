@@ -20,14 +20,14 @@ public class ProjectsService
     {
         _openedProjects = OpenedProjectData.Load(new XmlSerializer<OpenedProjectData>());
         _openedProjects.Projects = _openedProjects.Projects
-            .Where(p => new Project(p.Name, p.Path).Validate())
+            .Where(p => new Project(p.Name, new ProjectFileNode(p.Path)).Validate())
             .ToList();
         _openedProjects.Projects.ForEach(p => p.LoadImages());
     }
 
     public Project Create(string name, string path, ProjectTemplate? template = null)
     {
-        var project = new Project(name, path);
+        var project = new Project(name, new  ProjectFileNode(path));
         project.CreateScene("Default Scene");
         if (template != null)
         {
@@ -47,7 +47,8 @@ public class ProjectsService
 
     public Project Open(string path)
     {
-        var project = Project.OpenFolder(path, new XmlSerializer<ProjectBinding>());
+        var rootFolder = new ProjectFileNode(path);
+        var project = Project.OpenFolder(rootFolder, new XmlSerializer<ProjectBinding>());
         _openedProjects.MarkOpened(project);
         _openedProjects.Save(new XmlSerializer<OpenedProjectData>());
         CurrentProject  = project;

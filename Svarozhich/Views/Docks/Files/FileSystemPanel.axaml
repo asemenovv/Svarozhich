@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:models="clr-namespace:Svarozhich.Models"
+             xmlns:viewModels="clr-namespace:Svarozhich.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Svarozhich.Views.Docks.Files.FileSystemPanel"
+             x:DataType="viewModels:FilesExplorerViewModel">
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="Files" />
+        <TreeView ItemsSource="{Binding Path=Project.RootProjectFolder.Children, FallbackValue=N}"
+                  SelectedItem="{Binding SelectedNode}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="models:ProjectFileNode">
+                    <StackPanel Orientation="Horizontal" Spacing="4" Height="16">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Create Folder" />
+                                <MenuItem Header="Open in Finder"
+                                          IsVisible="{Binding IsFolder}"
+                                          Command="{Binding $parent[TreeView].DataContext.OpenFolderInFinderCommand}"
+                                          CommandParameter="{Binding .}" />
+
+                                <MenuItem Header="Delete" />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <iconPacks:PackIconPhosphorIcons
+                            Kind="{Binding NodeType, Converter={StaticResource FileTypeToIconConverter}}"
+                            Foreground="{Binding NodeType, Converter={StaticResource FileTypeToIconColorConverter}}"
+                            Width="16" Height="16" />
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </StackPanel>
+</UserControl>

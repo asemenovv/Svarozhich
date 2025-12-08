@@ -13,11 +13,13 @@ using Unit = System.Reactive.Unit;
 
 namespace Svarozhich.ViewModels;
 
-public class ProjectOpenedHandler(MainWindowViewModel viewModel, ILogger<ProjectOpenedHandler> logger) : INotificationHandler<ProjectOpenedEvent>
+public class ProjectOpenedHandler(MainWindowViewModel mainWindowViewModel, FilesExplorerViewModel filesExplorerViewModel,
+    ILogger<ProjectOpenedHandler> logger) : INotificationHandler<ProjectOpenedEvent>
 {
     public Task Handle(ProjectOpenedEvent notification, CancellationToken cancellationToken)
     {
-        viewModel.Project = notification.Project;
+        mainWindowViewModel.Project = notification.Project;
+        filesExplorerViewModel.Project = notification.Project;
         logger.LogInformation("Project {ProjectName} Opened", notification.Project.Name);
         return Task.CompletedTask;
     }
@@ -25,6 +27,7 @@ public class ProjectOpenedHandler(MainWindowViewModel viewModel, ILogger<Project
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public FilesExplorerViewModel FilesExplorerViewModel { get; private set; }
     public UndoRedoService UndoRedo { get; private set; }
     public ReactiveCommand<Unit, Unit> UndoCommand { get; }
     public ReactiveCommand<Unit, Unit> RedoCommand { get; }
@@ -33,12 +36,14 @@ public class MainWindowViewModel : ViewModelBase
     public Project? Project { get; set; }
 
     [ObservableAsProperty]
-    public string WindowTitle  { get; }
+    public string WindowTitle { get; } = "Svarozhich";
 
     public NodeEditorViewModel NodeEditorViewModel { get; }
 
-    public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, UndoRedoService undoRedoService)
+    public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, FilesExplorerViewModel filesExplorerViewModel,
+        UndoRedoService undoRedoService)
     {
+        FilesExplorerViewModel = filesExplorerViewModel;
         UndoRedo = undoRedoService;
         NodeEditorViewModel = nodeEditorViewModel;
         this.WhenAnyValue(vm => vm.Project)

@@ -45,6 +45,8 @@ public enum ProjectFileNodeType
     Scene,
     [FileExtensions(".png", ".jpg", ".jpeg", ".tga", ".bmp")]
     Texture,
+    [FileExtensions(".obj")]
+    Mesh,
     [FileExtensions(".vert", ".frag", ".glsl", ".hlsl")]
     Shader,
     Script

@@ -20,6 +20,8 @@ public class FileTypeToIconConverter : IValueConverter
                     => PackIconPhosphorIconsKind.FilmStrip,
                 ProjectFileNodeType.Texture
                     => PackIconPhosphorIconsKind.ImageSquare,
+                ProjectFileNodeType.Mesh
+                    => PackIconPhosphorIconsKind.Cube,
                 ProjectFileNodeType.Shader
                     => PackIconPhosphorIconsKind.CodeSimple,
                 ProjectFileNodeType.Script

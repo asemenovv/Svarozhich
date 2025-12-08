@@ -15,17 +15,18 @@ public class FileTypeToIconColorConverter : IValueConverter
             return type switch
             {
                 ProjectFileNodeType.RootFolder => Brushes.DeepSkyBlue,
-                ProjectFileNodeType.Folder => Brushes.SteelBlue,
+                ProjectFileNodeType.Folder => Brushes.CornflowerBlue,
                 ProjectFileNodeType.Scene => Brushes.Orange,
+                ProjectFileNodeType.Mesh => Brushes.DarkRed,
                 ProjectFileNodeType.Texture => Brushes.SeaGreen,
-                ProjectFileNodeType.Script => Brushes.Goldenrod,
+                ProjectFileNodeType.Script => Brushes.Gold,
                 ProjectFileNodeType.Shader => Brushes.MediumPurple,
                 ProjectFileNodeType.ProjectFile => Brushes.CadetBlue,
-                _ => Brushes.LightGray
+                _ => Brushes.WhiteSmoke
+
             };
         }
-
-        return Brushes.LightGray;
+        return Brushes.WhiteSmoke;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

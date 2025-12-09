@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models.Commands;
 
 namespace Svarozhich.Services;
 
-public class UndoRedoService
+public class UndoRedoService : ReactiveObject
 {
     private readonly Stack<IUndoableOperation> _undoStack = new();
     private readonly Stack<IUndoableOperation> _redoStack = new();

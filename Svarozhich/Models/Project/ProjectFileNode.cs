@@ -142,7 +142,8 @@ public class ProjectFileNode : ReactiveObject
 
     public void MoveTo(string destinationPath)
     {
-        if (Directory.Exists(FullPath))
-            Directory.Move(FullPath, destinationPath);
+        if (!Directory.Exists(FullPath)) return;
+        Directory.Move(FullPath, destinationPath);
+        FullPath = destinationPath;
     }
 }

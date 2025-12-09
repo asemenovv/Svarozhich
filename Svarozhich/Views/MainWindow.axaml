@@ -27,13 +27,12 @@
                 <MenuItem Header="Save" />
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="{Binding UndoRedo.CanRedo}" Command="{Binding UndoCommand}">
+                <MenuItem Header="Undo" Command="{Binding UndoCommand}">
                     <MenuItem.Icon>
                         <Image Source="{iconPacks:PhosphorIconsImage Kind=ArrowULeftDown, Brush=LightSkyBlue}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Redo" Command="{Binding RedoCommand}"
-                          IsEnabled="{Binding UndoRedo.CanRedo}">
+                <MenuItem Header="Redo" Command="{Binding RedoCommand}">
                     <MenuItem.Icon>
                         <Image Source="{iconPacks:PhosphorIconsImage Kind=ArrowURightDown, Brush=LightSkyBlue}" />
                     </MenuItem.Icon>

@@ -7,7 +7,12 @@
              xmlns:viewModels="clr-namespace:Svarozhich.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.Docks.Files.FileSystemPanel"
-             x:DataType="viewModels:FilesExplorerViewModel">
+             x:DataType="viewModels:FilesExplorerViewModel"
+             x:Name="FileSystemRootPanel">
+    <Design.DataContext>
+        <viewModels:FilesExplorerViewModel />
+    </Design.DataContext>
+    
     <StackPanel Orientation="Vertical">
         <TextBlock Text="Files" />
         <TreeView ItemsSource="{Binding Path=Project.RootProjectFolder.Children, FallbackValue=N}"
@@ -17,13 +22,29 @@
                     <StackPanel Orientation="Horizontal" Spacing="4" Height="16">
                         <StackPanel.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Create Folder" />
+                                <MenuItem Header="New Folder"
+                                          IsVisible="{Binding IsFolder}"
+                                          Command="{Binding DataContext.CreateFolderCommand, ElementName=FileSystemRootPanel}"
+                                          CommandParameter="{Binding .}">
+                                    <MenuItem.Icon>
+                                        <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderPlus, Brush=LightSkyBlue}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="Open in Finder"
                                           IsVisible="{Binding IsFolder}"
-                                          Command="{Binding $parent[TreeView].DataContext.OpenFolderInFinderCommand}"
-                                          CommandParameter="{Binding .}" />
-
-                                <MenuItem Header="Delete" />
+                                          Command="{Binding DataContext.OpenFolderInFinderCommand, ElementName=FileSystemRootPanel}"
+                                          CommandParameter="{Binding .}">
+                                    <MenuItem.Icon>
+                                        <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderOpen, Brush=LightSkyBlue}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Delete"
+                                          Command="{Binding DataContext.DeleteNodeCommand, ElementName=FileSystemRootPanel}"
+                                          CommandParameter="{Binding .}">
+                                    <MenuItem.Icon>
+                                        <Image Source="{iconPacks:PhosphorIconsImage Kind=Trash, Brush=LightSkyBlue}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                         <iconPacks:PackIconPhosphorIcons

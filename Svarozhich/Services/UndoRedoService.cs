@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using ReactiveUI.Fody.Helpers;
+using Svarozhich.Models.Commands;
 
-namespace Svarozhich.Models.Commands;
+namespace Svarozhich.Services;
 
 public class UndoRedoService
 {
@@ -12,6 +14,8 @@ public class UndoRedoService
     public bool CanUndo { get; private set; }
     [Reactive]
     public bool CanRedo { get; private set; }
+
+    private Guid _id = Guid.NewGuid();
 
     public void Do(IUndoableOperation op)
     {

@@ -2,6 +2,7 @@
                  xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
     <Folders xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
         <a:string>.Svarozhich</a:string>
+        <a:string>.Svarozhich/Trash</a:string>
         <a:string>Assets/Meshes</a:string>
         <a:string>Assets/Materials</a:string>
         <a:string>Scenes</a:string>

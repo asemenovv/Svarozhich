@@ -27,8 +27,7 @@
                 <MenuItem Header="Save" />
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="Undo" Command="{Binding UndoCommand}"
-                          IsEnabled="{Binding UndoRedo.CanUndo}">
+                <MenuItem Header="{Binding UndoRedo.CanRedo}" Command="{Binding UndoCommand}">
                     <MenuItem.Icon>
                         <Image Source="{iconPacks:PhosphorIconsImage Kind=ArrowULeftDown, Brush=LightSkyBlue}" />
                     </MenuItem.Icon>

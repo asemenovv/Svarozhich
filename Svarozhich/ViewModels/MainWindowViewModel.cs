@@ -8,6 +8,7 @@ using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
 using Svarozhich.Models.Commands;
 using Svarozhich.Models.Events;
+using Svarozhich.Services;
 using Svarozhich.ViewModels.Controls.Editors;
 using Unit = System.Reactive.Unit;
 
@@ -28,6 +29,7 @@ public class ProjectOpenedHandler(MainWindowViewModel mainWindowViewModel, Files
 public class MainWindowViewModel : ViewModelBase
 {
     public FilesExplorerViewModel FilesExplorerViewModel { get; private set; }
+    [Reactive]
     public UndoRedoService UndoRedo { get; private set; }
     public ReactiveCommand<Unit, Unit> UndoCommand { get; }
     public ReactiveCommand<Unit, Unit> RedoCommand { get; }
@@ -49,14 +51,10 @@ public class MainWindowViewModel : ViewModelBase
         this.WhenAnyValue(vm => vm.Project)
             .Select(p => p is null ? "Svarozhich" : $"Svarozhich - {p.Name}")
             .ToPropertyEx(this, vm => vm.WindowTitle);
-        UndoCommand = ReactiveCommand.Create(
-            () => UndoRedo.Undo(),
-            this.WhenAnyValue(vm => vm.UndoRedo.CanUndo)
-        );
-        RedoCommand = ReactiveCommand.Create(
-            () => UndoRedo.Redo(),
-            this.WhenAnyValue(vm => vm.UndoRedo.CanRedo)
-        );
+        var canUndo = this.WhenAnyValue(vm => vm.UndoRedo.CanUndo);
+        var canRedo = this.WhenAnyValue(vm => vm.UndoRedo.CanRedo);
+        UndoCommand = ReactiveCommand.Create(() => UndoRedo.Undo(), canUndo);
+        RedoCommand = ReactiveCommand.Create(() => UndoRedo.Redo(), canRedo);
     }
 
     public void RenameProject(string newName)

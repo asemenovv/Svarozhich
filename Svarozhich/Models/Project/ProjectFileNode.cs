@@ -127,4 +127,22 @@ public class ProjectFileNode : ReactiveObject
     {
         return Directory.Exists(FullPath);
     }
+
+    public string RelativePath()
+    {
+        if (Parent == null) return "rs://" + Name;
+        return Parent.RelativePath() + "/" + Name;
+    }
+
+    public void Delete()
+    {
+        Directory.Delete(FullPath, true);
+        Parent?.Children.Remove(this);
+    }
+
+    public void MoveTo(string destinationPath)
+    {
+        if (Directory.Exists(FullPath))
+            Directory.Move(FullPath, destinationPath);
+    }
 }

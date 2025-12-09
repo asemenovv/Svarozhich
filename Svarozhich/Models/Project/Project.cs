@@ -62,6 +62,11 @@ public class Project : PersistedEntity<ProjectBinding>
         return Path.Combine(RootProjectFolder.FullPath, projectLocalPath);
     }
 
+    public string TrashFolder()
+    {
+        return $"{RootProjectFolder.FullPath}/.Svarozhich/Trash";
+    }
+
     public NodeGraph GetNodeGraph()
     {
         var nodeGraph = new NodeGraph(this);

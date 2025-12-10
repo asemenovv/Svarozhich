@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive;
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
@@ -26,6 +27,12 @@ public class FilesExplorerViewModel : ViewModelBase
     public ReactiveCommand<ProjectFileNode, Unit> CreateFolderCommand { get; }
 
     public ReactiveCommand<ProjectFileNode, Unit> DeleteNodeCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> DeleteSelectedNodeCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> CreateFolderInSelectedFolderCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
     public FilesExplorerViewModel(UndoRedoService undoRedoService)
     {
@@ -33,6 +40,14 @@ public class FilesExplorerViewModel : ViewModelBase
         OpenFolderInFinderCommand = ReactiveCommand.Create<ProjectFileNode>(OpenFolderInFinder);
         CreateFolderCommand = ReactiveCommand.Create<ProjectFileNode>(CreateFolder);
         DeleteNodeCommand = ReactiveCommand.Create<ProjectFileNode>(DeleteNode);
+        
+        var isNodeSelected = this.WhenAnyValue(x => x.SelectedNode)
+            .Select(node => node != null);
+        var isFolderSelected = this.WhenAnyValue(x => x.SelectedNode)
+            .Select(node => node is { IsFolder: true });
+        DeleteSelectedNodeCommand = ReactiveCommand.Create(DeleteSelectedNode, isNodeSelected);
+        CreateFolderInSelectedFolderCommand = ReactiveCommand.Create(CreateFolderInSelectedNode, isFolderSelected);
+        RefreshCommand = ReactiveCommand.Create(() => Project?.RootProjectFolder.Refresh());
     }
 
     private void OpenFolderInFinder(ProjectFileNode node)
@@ -47,9 +62,21 @@ public class FilesExplorerViewModel : ViewModelBase
         Process.Start(psi);
     }
 
+    private void CreateFolderInSelectedNode()
+    {
+        if (SelectedNode == null)  return;
+        CreateFolder(SelectedNode);
+    }
+
     private void CreateFolder(ProjectFileNode node)
     {
         Console.WriteLine($"Create Folder in {node.FullPath}");
+    }
+
+    private void DeleteSelectedNode()
+    {
+        if (SelectedNode == null)  return;
+        DeleteNode(SelectedNode);
     }
 
     private async void DeleteNode(ProjectFileNode node)

@@ -75,27 +75,7 @@ public class ProjectFileNode : ReactiveObject
         Name = Path.GetFileName(fullPath);
         FullPath = fullPath;
         NodeType = nodeType;
-        if (nodeType == ProjectFileNodeType.Folder || nodeType == ProjectFileNodeType.RootFolder)
-        {
-            ScanFolder(this);
-        }
-    }
-
-    private void ScanFolder(ProjectFileNode folder)
-    {
-        if (!IsFolder || IsHidden()) return;
-        folder.Children.Clear();
-        folder.Children.AddRange(folder.LookupFolders());
-        foreach (var type in Enum.GetValues(typeof(ProjectFileNodeType)).Cast<ProjectFileNodeType>())
-        {
-            folder.Children.AddRange(folder.LookupFiles(type));
-        }
-    }
-
-    private bool IsHidden()
-    {
-        var directoryInfo = new DirectoryInfo(FullPath);
-        return directoryInfo.Attributes.HasFlag(FileAttributes.Hidden);
+        Refresh();
     }
 
     public ProjectFileNode Child(string name)
@@ -113,14 +93,6 @@ public class ProjectFileNode : ReactiveObject
         return files.Select(
             file => new ProjectFileNode(file, this, type)
         ).ToList();
-    }
-
-    public List<ProjectFileNode> LookupFolders()
-    {
-        return Directory.GetDirectories(FullPath)
-            .Select(d => new ProjectFileNode(d, this, ProjectFileNodeType.Folder))
-            .Where(d => !d.IsHidden())
-            .ToList();
     }
 
     public bool Valid()
@@ -145,5 +117,38 @@ public class ProjectFileNode : ReactiveObject
         if (!Directory.Exists(FullPath)) return;
         Directory.Move(FullPath, destinationPath);
         FullPath = destinationPath;
+    }
+
+    public void Refresh()
+    {
+        if (NodeType is ProjectFileNodeType.Folder or ProjectFileNodeType.RootFolder)
+        {
+            ScanFolder(this);
+        }
+    }
+
+    private List<ProjectFileNode> LookupFolders()
+    {
+        return Directory.GetDirectories(FullPath)
+            .Select(d => new ProjectFileNode(d, this, ProjectFileNodeType.Folder))
+            .Where(d => !d.IsHidden())
+            .ToList();
+    }
+
+    private bool IsHidden()
+    {
+        var directoryInfo = new DirectoryInfo(FullPath);
+        return directoryInfo.Attributes.HasFlag(FileAttributes.Hidden);
+    }
+
+    private void ScanFolder(ProjectFileNode folder)
+    {
+        if (!IsFolder || IsHidden()) return;
+        folder.Children.Clear();
+        folder.Children.AddRange(folder.LookupFolders());
+        foreach (var type in Enum.GetValues(typeof(ProjectFileNodeType)).Cast<ProjectFileNodeType>())
+        {
+            folder.Children.AddRange(folder.LookupFiles(type));
+        }
     }
 }

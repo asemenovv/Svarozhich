@@ -14,7 +14,66 @@
     </Design.DataContext>
     
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="Files" />
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,4" >
+            <StackPanel.Styles>
+                <!-- Общий стиль для маленьких квадратных кнопок -->
+                <Style Selector="Button">
+                    <Setter Property="Width" Value="24" />
+                    <Setter Property="Height" Value="24" />
+                    <Setter Property="Padding" Value="2" />
+                    <Setter Property="Margin" Value="5,5,0,5" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="Background" Value="DimGray" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="CornerRadius" Value="5" />
+                    <Setter Property="ToolTip.Placement" Value="Bottom" />
+                    <Setter Property="ToolTip.ShowDelay" Value="300" />
+                </Style>
+                
+                <Style Selector="Button:pointerover">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="DimGray" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Style>
+
+                <Style Selector="Button:pressed">
+                    <Setter Property="Background" Value="#304A4A4A" />
+                </Style>
+
+                <Style Selector="Button:disabled">
+                    <Setter Property="Opacity" Value="0.4" />
+                </Style>
+            </StackPanel.Styles>
+            
+            <Button Command="{Binding CreateFolderInSelectedFolderCommand}">
+                <ToolTip.Tip>New Folder</ToolTip.Tip>
+                <iconPacks:PackIconPhosphorIcons Kind="FolderPlus" Width="16" Height="16" Foreground="LightSkyBlue" />
+            </Button>
+
+            <!-- New Scene -->
+            <Button>
+                <ToolTip.Tip>New Scene</ToolTip.Tip>
+                <iconPacks:PackIconPhosphorIcons Kind="TreeStructure" Width="16" Height="16" Foreground="Orange" />
+            </Button>
+
+            <!-- Rename -->
+            <Button>
+                <ToolTip.Tip>Rename</ToolTip.Tip>
+                <iconPacks:PackIconPhosphorIcons Kind="Pencil" Width="16" Height="16" Foreground="LightGray" />
+            </Button>
+            
+            <Button Command="{Binding DeleteSelectedNodeCommand}">
+                <ToolTip.Tip>Delete</ToolTip.Tip>
+                <iconPacks:PackIconPhosphorIcons Kind="Trash" Width="16" Height="16" Foreground="Tomato" />
+            </Button>
+            <Button Command="{Binding RefreshCommand}">
+                <ToolTip.Tip>Refresh</ToolTip.Tip>
+                <iconPacks:PackIconPhosphorIcons Kind="ArrowClockwise" Width="16" Height="16" Foreground="LightGray" />
+            </Button>
+        </StackPanel>
         <TreeView ItemsSource="{Binding Path=Project.RootProjectFolder.Children, FallbackValue=N}"
                   SelectedItem="{Binding SelectedNode}">
             <TreeView.ItemTemplate>

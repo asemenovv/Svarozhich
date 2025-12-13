@@ -119,6 +119,15 @@ public class ProjectFileNode : ReactiveObject
         FullPath = destinationPath;
     }
 
+    public ProjectFileNode CreateChildFolder(string name)
+    {
+        var path = Path.Combine(FullPath, name);
+        Directory.CreateDirectory(path);
+        var node = new ProjectFileNode(path, this, ProjectFileNodeType.Folder);
+        Children.Add(node);
+        return node;
+    }
+
     public void Refresh()
     {
         if (NodeType is ProjectFileNodeType.Folder or ProjectFileNodeType.RootFolder)

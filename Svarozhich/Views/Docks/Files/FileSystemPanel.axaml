@@ -83,7 +83,7 @@
                             <ContextMenu>
                                 <MenuItem Header="New Folder"
                                           IsVisible="{Binding IsFolder}"
-                                          Command="{Binding DataContext.CreateFolderCommand, ElementName=FileSystemRootPanel}"
+                                          Command="{Binding DataContext.CreateFolderIn, ElementName=FileSystemRootPanel}"
                                           CommandParameter="{Binding .}">
                                     <MenuItem.Icon>
                                         <Image Source="{iconPacks:PhosphorIconsImage Kind=FolderPlus, Brush=LightSkyBlue}" />
@@ -98,7 +98,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Header="Delete"
-                                          Command="{Binding DataContext.DeleteNodeCommand, ElementName=FileSystemRootPanel}"
+                                          Command="{Binding DataContext.DeleteNode, ElementName=FileSystemRootPanel}"
                                           CommandParameter="{Binding .}">
                                     <MenuItem.Icon>
                                         <Image Source="{iconPacks:PhosphorIconsImage Kind=Trash, Brush=LightSkyBlue}" />

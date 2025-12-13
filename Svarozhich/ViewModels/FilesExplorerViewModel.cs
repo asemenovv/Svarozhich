@@ -14,6 +14,7 @@ using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
 using Svarozhich.Models.Commands;
 using Svarozhich.Services;
+using Svarozhich.Views.Controls.Dialogs;
 
 namespace Svarozhich.ViewModels;
 
@@ -23,7 +24,7 @@ public class FilesExplorerViewModel : ViewModelBase
     [Reactive] public Project? Project { get; set; }
     [Reactive] public ProjectFileNode? SelectedNode { get; set; }
     public Interaction<ProjectFileNode, bool> DeleteConfirmationInteraction { get; }
-    public Interaction<Unit, string?> FolderNameDialogInteraction { get; }
+    public Interaction<ProjectFileNode, InputDialogResponse?> FolderNameDialogInteraction { get; }
 
     public ReactiveCommand<ProjectFileNode, Unit> OpenFolderInFinderCommand { get; }
     
@@ -37,7 +38,7 @@ public class FilesExplorerViewModel : ViewModelBase
     {
         _undoRedoService = undoRedoService;
         DeleteConfirmationInteraction = new Interaction<ProjectFileNode, bool>();
-        FolderNameDialogInteraction = new Interaction<Unit, string?>();
+        FolderNameDialogInteraction = new Interaction<ProjectFileNode, InputDialogResponse?>();
         OpenFolderInFinderCommand = ReactiveCommand.Create<ProjectFileNode>(OpenFolderInFinder);
         
         var isNodeSelected = this.WhenAnyValue(x => x.SelectedNode)
@@ -45,7 +46,7 @@ public class FilesExplorerViewModel : ViewModelBase
         var isFolderSelected = this.WhenAnyValue(x => x.SelectedNode)
             .Select(node => node is { IsFolder: true });
         DeleteSelectedNodeCommand = ReactiveCommand.CreateFromTask(DeleteSelectedNode, isNodeSelected);
-        CreateFolderInSelectedFolderCommand = ReactiveCommand.CreateFromTask(CreateFolderInSelectedNode, isFolderSelected);
+        CreateFolderInSelectedFolderCommand = ReactiveCommand.CreateFromTask(CreateFolderInSelectedNode);
         RefreshCommand = ReactiveCommand.Create(() => Project?.RootProjectFolder.Refresh());
     }
 
@@ -62,13 +63,18 @@ public class FilesExplorerViewModel : ViewModelBase
         }
     }
 
-    public async Task CreateFolderIn(ProjectFileNode node)
+    public async Task CreateFolderIn(ProjectFileNode parentFolder)
     {
-        var folderName = await FolderNameDialogInteraction.Handle(Unit.Default);
-        if (string.IsNullOrEmpty(folderName)) return;
-        var operation = new CreateFolderOperation(node, folderName);
+        var response = await FolderNameDialogInteraction.Handle(parentFolder);
+        if (string.IsNullOrEmpty(response?.Text)) return;
+        if (response.FlagChecked != null && response.FlagChecked.Value)
+        {
+            parentFolder = Project!.RootProjectFolder;
+        }
+        
+        var operation = new CreateFolderOperation(parentFolder, response.Text);
         _undoRedoService.Do(operation);
-        Console.Write($"Creating '{folderName}' folder in '{node.RelativePath()}'");
+        Console.Write($"Creating '{response}' folder in '{parentFolder.RelativePath()}'");
     }
 
     private async Task DeleteSelectedNode()
@@ -91,7 +97,13 @@ public class FilesExplorerViewModel : ViewModelBase
 
     private async Task CreateFolderInSelectedNode()
     {
-        if (SelectedNode == null)  return;
-        await CreateFolderIn(SelectedNode);
+        if (SelectedNode == null)
+        {
+            await CreateFolderIn(Project?.RootProjectFolder!);
+        }
+        else
+        {
+            await CreateFolderIn(SelectedNode);
+        }
     }
 }

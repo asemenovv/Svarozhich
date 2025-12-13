@@ -24,8 +24,9 @@ public partial class FileSystemPanel : ReactiveUserControl<FilesExplorerViewMode
         this.WhenActivated(OnViewActivation);
     }
 
-    private async Task AskForFolderNameHandler(IInteractionContext<Unit, string?> context)
+    private async Task AskForFolderNameHandler(IInteractionContext<ProjectFileNode, InputDialogResponse?> context)
     {
+        var parentFolder = context.Input;
         var window = TopLevel.GetTopLevel(this) as Window;
         if (window == null)
         {
@@ -33,10 +34,13 @@ public partial class FileSystemPanel : ReactiveUserControl<FilesExplorerViewMode
             return;
         }
 
-        var folderNameDialog = new InputDialogConfigs("Folder Name", "Set name of the folder:", "New Folder");
+        var folderNameDialog = new InputDialogConfigs("New Folder", "Name:", "New Folder",
+            true, "Root folder",
+            parentFolder.NodeType == ProjectFileNodeType.RootFolder,
+            parentFolder.NodeType == ProjectFileNodeType.RootFolder);
         var inputDialogView = new InputDialogView(folderNameDialog);
-        var folderName = await inputDialogView.ShowDialog<string?>(window);
-        context.SetOutput(folderName);
+        var dialogResponse = await inputDialogView.ShowDialog<InputDialogResponse?>(window);
+        context.SetOutput(dialogResponse);
     }
 
     private async Task DeleteConfirmationHandler(IInteractionContext<ProjectFileNode, bool> context)

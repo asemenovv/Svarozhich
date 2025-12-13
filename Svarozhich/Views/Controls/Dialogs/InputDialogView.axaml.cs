@@ -4,10 +4,19 @@ using Avalonia.Interactivity;
 
 namespace Svarozhich.Views.Controls.Dialogs;
 
+public record InputDialogResponse(
+    string? Text,
+    bool? FlagChecked
+);
+
 public record InputDialogConfigs(
     string Title,
     string Message,
-    string DefaultValue = ""
+    string DefaultValue = "",
+    bool ShowBooleanFlag = false,
+    string BooleanFlagLabel = "",
+    bool BooleanFlagDefaultValue = false,
+    bool BooleanFlagReadOnly = false
 );
 
 public partial class InputDialogView : Window
@@ -19,18 +28,26 @@ public partial class InputDialogView : Window
         DataContext = this;
         Title = configs.Title;
         
-        var caption = this.FindControl<TextBlock>("CaptionText");
+        var caption = this.FindControl<TextBlock>("InputCaptionText");
         caption!.Text = configs.Message;
         
         var textInput = this.FindControl<TextBox>("InputBox");
         textInput!.Text = configs.DefaultValue;
         textInput.Focus();
         textInput.CaretIndex = textInput.Text?.Length ?? 0;
+
+        var checkBox = this.FindControl<CheckBox>("InputCheckBox");
+        checkBox.IsVisible = configs.ShowBooleanFlag;
+        checkBox.Content = configs.BooleanFlagLabel;
+        checkBox.IsChecked = configs.BooleanFlagDefaultValue;
+        checkBox.IsEnabled = !configs.BooleanFlagReadOnly;
     }
 
     public void OkClick(object? sender, RoutedEventArgs e)
     {
-        Close(this.FindControl<TextBox>("InputBox")!.Text);
+        var dialogResult = new InputDialogResponse(this.FindControl<TextBox>("InputBox")!.Text,
+            this.FindControl<CheckBox>("InputCheckBox")?.IsChecked);
+        Close(dialogResult);
     }
 
     public void CancelClick(object? sender, RoutedEventArgs e)

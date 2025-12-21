@@ -22,6 +22,7 @@
     <Application.Resources>
         <converters:FileTypeToIconConverter x:Key="FileTypeToIconConverter" />
         <converters:FileTypeToIconColorConverter x:Key="FileTypeToIconColorConverter" />
+        <converters:EntityToIconConverter x:Key="EntityToIconConverter" />
         <!-- <FontFamily x:Key="Inter18PtRegular">/Assets/Fonts/Inter/static/Inter_18pt-Regular.ttf#Inter 18pt Regular</FontFamily> -->
         <!-- <FontFamily x:Key="Inter18PtSemiBold">/Assets/Fonts/Inter/static/Inter_18pt-SemiBold.ttf#Inter 18pt SemiBold</FontFamily> -->
     </Application.Resources>

@@ -42,6 +42,7 @@ public partial class App : Application
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<MainWindow>();
         services.AddSingleton<FilesExplorerViewModel>();
+        services.AddSingleton<SceneBrowserViewModel>();
         
         services.AddSingleton<ProjectsExploreDialogViewModel>();
         services.AddSingleton<ProjectsExploreDialog>();

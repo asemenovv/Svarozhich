@@ -41,7 +41,7 @@ public class Project : PersistedEntity<ProjectBinding>
 
     public Scene CreateScene(string name, string projectFolder = "Scenes/")
     {
-        if (Scenes.Any(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+        if (Scenes.Any(s => s.Root.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
         {
             throw new ArgumentException($"Scene with name {name} already exists in Project {Name}.", nameof(name));
         }

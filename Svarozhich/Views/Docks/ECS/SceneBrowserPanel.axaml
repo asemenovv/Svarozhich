@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:viewModels="clr-namespace:Svarozhich.ViewModels"
+             xmlns:ecs="clr-namespace:Svarozhich.Models.ECS"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SceneBrowserViewModel"
+             x:Class="Svarozhich.Views.Docks.ECS.SceneBrowserPanel">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,4" >
+            <StackPanel.Styles>
+                <Style Selector="Button">
+                    <Setter Property="Width" Value="24" />
+                    <Setter Property="Height" Value="24" />
+                    <Setter Property="Padding" Value="2" />
+                    <Setter Property="Margin" Value="5,5,0,5" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="Background" Value="DimGray" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="CornerRadius" Value="5" />
+                    <Setter Property="ToolTip.Placement" Value="Bottom" />
+                    <Setter Property="ToolTip.ShowDelay" Value="300" />
+                </Style>
+                <Style Selector="Button:pointerover">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="DimGray" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Style>
+                <Style Selector="Button:pressed">
+                    <Setter Property="Background" Value="#304A4A4A" />
+                </Style>
+                <Style Selector="Button:disabled">
+                    <Setter Property="Opacity" Value="0.4" />
+                </Style>
+            </StackPanel.Styles>
+            
+            <Button>
+                <ToolTip.Tip>New</ToolTip.Tip>
+                <iconPacks:PackIconPhosphorIcons Kind="Plus" Width="16" Height="16" Foreground="LightSkyBlue"/>
+            </Button>
+        </StackPanel>
+        
+        <TreeView ItemsSource="{Binding ActiveScene.Root.Children}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="ecs:Entity">
+                    <StackPanel Orientation="Horizontal" Spacing="4" Height="16">
+                        <iconPacks:PackIconPhosphorIcons
+                            Kind="{Binding Path=., Converter={StaticResource EntityToIconConverter}}"
+                            Foreground="CornflowerBlue" Width="16" Height="16" />
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </StackPanel>
+</UserControl>

@@ -25,12 +25,18 @@ public class FilesExplorerViewModel : ViewModelBase
     [Reactive] public ProjectFileNode? SelectedNode { get; set; }
     public Interaction<ProjectFileNode, bool> DeleteConfirmationInteraction { get; }
     public Interaction<ProjectFileNode, InputDialogResponse?> FolderNameDialogInteraction { get; }
+    
+    public ReactiveCommand<Unit, Unit> OpenCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> CreateFolderCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> CreateSceneInSelectedFolderCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> RenameCommand { get; }
 
     public ReactiveCommand<ProjectFileNode, Unit> OpenFolderInFinderCommand { get; }
     
     public ReactiveCommand<Unit, Unit> DeleteSelectedNodeCommand { get; }
-    
-    public ReactiveCommand<Unit, Unit> CreateFolderInSelectedFolderCommand { get; }
     
     public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
@@ -41,26 +47,22 @@ public class FilesExplorerViewModel : ViewModelBase
         FolderNameDialogInteraction = new Interaction<ProjectFileNode, InputDialogResponse?>();
         OpenFolderInFinderCommand = ReactiveCommand.Create<ProjectFileNode>(OpenFolderInFinder);
         
-        var isNodeSelected = this.WhenAnyValue(x => x.SelectedNode)
-            .Select(node => node != null);
+        // var isNodeSelected = this.WhenAnyValue(x => x.SelectedNode)
+            // .Select(node => node != null);
         var isFolderSelected = this.WhenAnyValue(x => x.SelectedNode)
             .Select(node => node is { IsFolder: true });
-        DeleteSelectedNodeCommand = ReactiveCommand.CreateFromTask(DeleteSelectedNode, isNodeSelected);
-        CreateFolderInSelectedFolderCommand = ReactiveCommand.CreateFromTask(CreateFolderInSelectedNode);
+        var isFileToOpenSelected = this.WhenAnyValue(x => x.SelectedNode)
+            .Select(node => node is { NodeType: ProjectFileNodeType.Scene });
+        var isDeletable = this.WhenAnyValue(x => x.SelectedNode)
+            .Select(node => node != null && node.NodeType.IsDeletable());
+        var canBeRenamed = this.WhenAnyValue(x => x.SelectedNode)
+            .Select(node => node != null && node.NodeType.CanBeRenamed());
+        OpenCommand = ReactiveCommand.CreateFromTask(OpenSelectedNode, isFileToOpenSelected);
+        CreateFolderCommand = ReactiveCommand.CreateFromTask(CreateFolderInSelectedNode);
+        CreateSceneInSelectedFolderCommand = ReactiveCommand.CreateFromTask(CreateSceneInSelectedNode, isFolderSelected);
+        RenameCommand = ReactiveCommand.CreateFromTask(RenameSelectedNode, canBeRenamed);
+        DeleteSelectedNodeCommand = ReactiveCommand.CreateFromTask(DeleteSelectedNode, isDeletable);
         RefreshCommand = ReactiveCommand.Create(() => Project?.RootProjectFolder.Refresh());
-    }
-
-    public async Task DeleteNode(ProjectFileNode node)
-    {
-        var deleteConfirmed = await DeleteConfirmationInteraction.Handle(node);
-        if (deleteConfirmed)
-        {
-            var delete = new CompositeOperation($"Delete {(node.IsFolder ? "Folder" : "File")}", [
-                new RemoveNodeFromFilesTreeOperation(node),
-                new DeleteNodeFromDiskOperation(node, Project!.TrashFolder())
-            ]);
-            _undoRedoService.Do(delete);
-        }
     }
 
     public async Task CreateFolderIn(ProjectFileNode parentFolder)
@@ -75,6 +77,19 @@ public class FilesExplorerViewModel : ViewModelBase
         var operation = new CreateFolderOperation(parentFolder, response.Text);
         _undoRedoService.Do(operation);
         Console.Write($"Creating '{response}' folder in '{parentFolder.RelativePath()}'");
+    }
+
+    public async Task DeleteNode(ProjectFileNode node)
+    {
+        var deleteConfirmed = await DeleteConfirmationInteraction.Handle(node);
+        if (deleteConfirmed)
+        {
+            var delete = new CompositeOperation($"Delete {(node.IsFolder ? "Folder" : "File")}", [
+                new RemoveNodeFromFilesTreeOperation(node),
+                new DeleteNodeFromDiskOperation(node, Project!.TrashFolder())
+            ]);
+            _undoRedoService.Do(delete);
+        }
     }
 
     private async Task DeleteSelectedNode()
@@ -95,9 +110,15 @@ public class FilesExplorerViewModel : ViewModelBase
         Process.Start(psi);
     }
 
+    private async Task OpenSelectedNode()
+    {
+        // SelectedNode;
+        Console.WriteLine($"Opening '{SelectedNode.RelativePath()}'");
+    }
+
     private async Task CreateFolderInSelectedNode()
     {
-        if (SelectedNode == null)
+        if (SelectedNode is not { NodeType: ProjectFileNodeType.Folder })
         {
             await CreateFolderIn(Project?.RootProjectFolder!);
         }
@@ -105,5 +126,15 @@ public class FilesExplorerViewModel : ViewModelBase
         {
             await CreateFolderIn(SelectedNode);
         }
+    }
+
+    private async Task CreateSceneInSelectedNode()
+    {
+        if (SelectedNode == null) return;
+    }
+    
+    private async Task RenameSelectedNode()
+    {
+        if (SelectedNode == null) return;
     }
 }

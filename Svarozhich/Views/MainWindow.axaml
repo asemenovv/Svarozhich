@@ -6,8 +6,8 @@
         xmlns:editors="clr-namespace:Svarozhich.Views.Controls.Editors"
         xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:docks="clr-namespace:Svarozhich.Views.Docks"
-        xmlns:models="clr-namespace:Svarozhich.Models"
         xmlns:files="clr-namespace:Svarozhich.Views.Docks.Files"
+        xmlns:ecs="clr-namespace:Svarozhich.Views.Docks.ECS"
         mc:Ignorable="d"
         x:Class="Svarozhich.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -54,14 +54,15 @@
                     <ProportionalDock x:Name="LeftPane" Orientation="Vertical" Proportion="0.25">
                         <ToolDock Proportion="0.5">
                             <Tool Title="Scene Explorer">
-                                <TextBlock Text="ECS" />
+                                <ecs:SceneBrowserPanel
+                                    DataContext="{Binding Path=DataContext.SceneBrowserViewModel, ElementName=RootWindow, FallbackValue={x:Null}}"/>
                             </Tool>
                         </ToolDock>
                         <ProportionalDockSplitter />
                         <ToolDock Proportion="0.5">
                             <Tool Title="Files Explorer">
                                 <files:FileSystemPanel
-                                    DataContext="{Binding Path=DataContext.FilesExplorerViewModel, ElementName=RootWindow, FallbackValue=NULL}" />
+                                    DataContext="{Binding Path=DataContext.FilesExplorerViewModel, ElementName=RootWindow, FallbackValue={x:Null}}" />
                             </Tool>
                         </ToolDock>
                     </ProportionalDock>

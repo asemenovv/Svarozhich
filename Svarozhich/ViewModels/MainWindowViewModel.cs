@@ -29,6 +29,7 @@ public class ProjectOpenedHandler(MainWindowViewModel mainWindowViewModel, Files
 public class MainWindowViewModel : ViewModelBase
 {
     public FilesExplorerViewModel FilesExplorerViewModel { get; private set; }
+    public SceneBrowserViewModel SceneBrowserViewModel { get; private set; }
     [Reactive]
     public UndoRedoService UndoRedo { get; private set; }
     public ReactiveCommand<Unit, Unit> UndoCommand { get; }
@@ -43,9 +44,10 @@ public class MainWindowViewModel : ViewModelBase
     public NodeEditorViewModel NodeEditorViewModel { get; }
 
     public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, FilesExplorerViewModel filesExplorerViewModel,
-        UndoRedoService undoRedoService)
+        SceneBrowserViewModel sceneBrowserViewModel, UndoRedoService undoRedoService)
     {
         FilesExplorerViewModel = filesExplorerViewModel;
+        SceneBrowserViewModel = sceneBrowserViewModel;
         UndoRedo = undoRedoService;
         NodeEditorViewModel = nodeEditorViewModel;
         this.WhenAnyValue(vm => vm.Project)

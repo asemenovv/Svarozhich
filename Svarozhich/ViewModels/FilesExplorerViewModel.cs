@@ -21,6 +21,7 @@ namespace Svarozhich.ViewModels;
 public class FilesExplorerViewModel : ViewModelBase
 {
     private readonly UndoRedoService _undoRedoService;
+    private readonly TrashFolderService _trashFolderService;
     [Reactive] public Project? Project { get; set; }
     [Reactive] public ProjectFileNode? SelectedNode { get; set; }
     public Interaction<ProjectFileNode, bool> DeleteConfirmationInteraction { get; }
@@ -40,9 +41,10 @@ public class FilesExplorerViewModel : ViewModelBase
     
     public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
-    public FilesExplorerViewModel(UndoRedoService undoRedoService)
+    public FilesExplorerViewModel(UndoRedoService undoRedoService, TrashFolderService trashFolderService)
     {
         _undoRedoService = undoRedoService;
+        _trashFolderService = trashFolderService;
         DeleteConfirmationInteraction = new Interaction<ProjectFileNode, bool>();
         FolderNameDialogInteraction = new Interaction<ProjectFileNode, InputDialogResponse?>();
         OpenFolderInFinderCommand = ReactiveCommand.Create<ProjectFileNode>(OpenFolderInFinder);
@@ -86,7 +88,7 @@ public class FilesExplorerViewModel : ViewModelBase
         {
             var delete = new CompositeOperation($"Delete {(node.IsFolder ? "Folder" : "File")}", [
                 new RemoveNodeFromFilesTreeOperation(node),
-                new DeleteNodeFromDiskOperation(node, Project!.TrashFolder())
+                new DeleteNodeFromDiskOperation(node, _trashFolderService.TrashFolder(Project!))
             ]);
             _undoRedoService.Do(delete);
         }

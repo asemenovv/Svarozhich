@@ -27,7 +27,7 @@ public class OpenProjectViewModel(ProjectsService projectsService, IMediator med
 
     public async Task OpenProject()
     {
-        var project = projectsService.Open(SelectedProject!.Path);
+        var project = projectsService.LoadFromFolder(SelectedProject!.Path);
         await mediator.Publish(new ProjectOpenedEvent(project));
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Open));
     }

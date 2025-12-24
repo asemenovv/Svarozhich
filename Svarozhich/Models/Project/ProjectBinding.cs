@@ -9,10 +9,4 @@ public class ProjectBinding
 {
     [DataMember(Order = 1)]
     public required string Name { get; set; }
-
-    [DataMember(Order = 2)]
-    public required string RootFolder { get; set; }
-
-    [DataMember(Order = 3)]
-    public List<SceneRefDto> Scenes { get; set; } = [];
 }

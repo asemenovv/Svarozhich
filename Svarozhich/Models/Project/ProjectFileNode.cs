@@ -149,6 +149,14 @@ public class ProjectFileNode : ReactiveObject
         return node;
     }
 
+    public void CreateIfNotExist()
+    {
+        if (IsFolder && !Directory.Exists(FullPath))
+        {
+            Directory.CreateDirectory(FullPath);
+        }
+    }
+
     public void Refresh()
     {
         if (NodeType is ProjectFileNodeType.Folder or ProjectFileNodeType.RootFolder)
@@ -180,5 +188,10 @@ public class ProjectFileNode : ReactiveObject
         {
             folder.Children.AddRange(folder.LookupFiles(type));
         }
+    }
+
+    public string FilePath(string fileName)
+    {
+        return Path.Combine(FullPath, fileName);
     }
 }

@@ -42,14 +42,4 @@ public class NodeGraph : PersistedEntity<NodeGraphBinding>
     {
         return _connections.FirstOrDefault(c => c.To == inputPort);
     }
-
-    protected override NodeGraphBinding ToDto()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override string FilePath()
-    {
-        throw new NotImplementedException();
-    }
 }

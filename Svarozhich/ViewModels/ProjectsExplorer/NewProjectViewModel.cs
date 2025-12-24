@@ -78,7 +78,7 @@ public class NewProjectViewModel : ViewModelBase
     {
         var projectHomePath = Path.Combine(ProjectPath, ProjectName);
         _projectsService.Create(ProjectName, projectHomePath, SelectedTemplate);
-        var project = _projectsService.Open(projectHomePath);
+        var project = _projectsService.LoadFromFolder(projectHomePath);
         await _mediator.Publish(new ProjectOpenedEvent(project));
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
     }

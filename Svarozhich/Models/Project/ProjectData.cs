@@ -63,14 +63,23 @@ public class OpenedProjectData : PersistedEntity<OpenedProjectData>
         MarkDirty();
     }
 
-    protected override OpenedProjectData ToDto()
+    private OpenedProjectData ToDto()
     {
         return this;
     }
 
-    protected override string FilePath()
+    private string FilePath()
     {
         return ProjectsDataPath;
+    }
+    
+    public void Save(ISerializer<OpenedProjectData> serializer)
+    {
+        if (IsDirty)
+        {
+            serializer.ToFile(ToDto(), FilePath());
+        }
+        MarkClean();
     }
 
     public static OpenedProjectData Load(ISerializer<OpenedProjectData> serializer)

@@ -53,6 +53,7 @@ public partial class App : Application
         
         services.AddSingleton<ProjectsService>();
         services.AddSingleton<UndoRedoService>();
+        services.AddSingleton<TrashFolderService>();
         
         services.AddMediatR(cfg => 
         {

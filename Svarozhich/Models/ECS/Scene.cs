@@ -70,35 +70,4 @@ public class Scene : PersistedEntity<SceneDto>
         
         Detach(entity);
     }
-
-    
-
-    //TODO: Refactor it
-    protected override string FilePath()
-    {
-        return _project.AbsolutePath(SceneFileLocalPath());
-    }
-
-    public SceneRefDto ToRefDto()
-    {
-        return new SceneRefDto
-        {
-            Name = Root.Name,
-            Path = SceneFileLocalPath()
-        };
-    }
-
-    protected override SceneDto ToDto()
-    {
-        return new SceneDto
-        {
-            Name = Root.Name,
-            Path = SceneFileLocalPath()
-        };
-    }
-
-    private string SceneFileLocalPath()
-    {
-        return Path.Combine(_projectLocalFolder, $"{Root.Name}{Extension}");
-    }
 }

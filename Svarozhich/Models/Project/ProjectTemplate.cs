@@ -17,14 +17,14 @@ public class ProjectTemplate
     public string? PreviewImagePath { get; set; }
     public Bitmap? PreviewImage { get; set; }
 
-    public void CreateFolders(string projectHomePath)
+    public void CreateFolders(ProjectFileNode projectHomePath)
     {
         foreach (var folder in Folders)
         {
-            Directory.CreateDirectory(Path.Combine(projectHomePath, folder));
+            Directory.CreateDirectory(Path.Combine(projectHomePath.FullPath, folder));
         }
 
-        var editorSystemPath = new DirectoryInfo(Path.Combine(projectHomePath, ".Svarozhich"));
+        var editorSystemPath = new DirectoryInfo(Path.Combine(projectHomePath.FullPath, ".Svarozhich"));
         editorSystemPath.Attributes |= FileAttributes.Hidden;
         if (PreviewImagePath != null)
             File.Copy(PreviewImagePath, Path.Combine(editorSystemPath.FullName, "preview.png"));

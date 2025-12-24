@@ -8,7 +8,7 @@ namespace Svarozhich.Models;
 public abstract class PersistedEntity<T> : ReactiveObject
 {
     [IgnoreDataMember]
-    protected bool IsDirty { get; private set; }
+    public bool IsDirty { get; private set; }
 
     protected void MarkDirty()
     {

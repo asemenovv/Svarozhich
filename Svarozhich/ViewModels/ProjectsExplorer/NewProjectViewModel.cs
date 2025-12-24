@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class NewProjectViewModel : ViewModelBase
 {
-    private readonly ProjectsService _projectsService;
+    private readonly ProjectsAppService _projectsAppService;
     private readonly IMediator _mediator;
 
     [Reactive]
@@ -31,9 +32,9 @@ public class NewProjectViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task> CreateCommand { get; }
     public ObservableCollection<ProjectTemplate> ProjectTemplates { get; set; } = [];
 
-    public NewProjectViewModel(ProjectsService projectsService, IMediator mediator)
+    public NewProjectViewModel(ProjectsAppService projectsAppService, ProjectTemplatesService projectTemplatesService, IMediator mediator)
     {
-        _projectsService = projectsService;
+        _projectsAppService = projectsAppService;
         _mediator = mediator;
         PickFolderInteraction = new Interaction<Unit, string?>();
         CloseDialogInteraction = new Interaction<ProjectExploreResult, Unit>();
@@ -58,7 +59,7 @@ public class NewProjectViewModel : ViewModelBase
         
         CreateCommand = ReactiveCommand.Create(CreateProject, ValidationContext.Valid);
         
-        ProjectTemplates = new ObservableCollection<ProjectTemplate>(_projectsService.LoadProjectTemplates());
+        ProjectTemplates = new ObservableCollection<ProjectTemplate>(projectTemplatesService.LoadTemplates());
         foreach (var template in ProjectTemplates) template.LoadPreviewImage();
     }
     
@@ -77,8 +78,9 @@ public class NewProjectViewModel : ViewModelBase
     private async Task CreateProject()
     {
         var projectHomePath = Path.Combine(ProjectPath, ProjectName);
-        _projectsService.Create(ProjectName, projectHomePath, SelectedTemplate);
-        var project = _projectsService.LoadFromFolder(projectHomePath);
+        Debug.Assert(SelectedTemplate != null, nameof(SelectedTemplate) + " != null");
+        _projectsAppService.CreateProjectFromTemplate(ProjectName, projectHomePath, SelectedTemplate);
+        var project = _projectsAppService.LoadFromFolder(projectHomePath);
         await _mediator.Publish(new ProjectOpenedEvent(project));
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
     }

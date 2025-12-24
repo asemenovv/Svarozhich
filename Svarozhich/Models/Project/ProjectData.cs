@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using Avalonia.Media.Imaging;
-using Svarozhich.Utils;
 
 namespace Svarozhich.Models;
 
@@ -31,19 +29,6 @@ public class OpenedProjectData : PersistedEntity<OpenedProjectData>
 {
     [DataMember(Name = "Projects")]
     public List<ProjectData> Projects { get; set; } = [];
-    private static readonly string ApplicationDataPath = Path.Combine(
-        $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}", "Svarozhich");
-    // /Users/alexeysemenov/Library/Application Support/Svarozhich/Projects.xml
-    private static readonly string ProjectsDataPath;
-
-    static OpenedProjectData()
-    {
-        if (!Directory.Exists(ApplicationDataPath))
-        {
-            Directory.CreateDirectory(ApplicationDataPath);
-        }
-        ProjectsDataPath = Path.Combine(ApplicationDataPath, "Projects.xml");
-    }
 
     public void MarkOpened(Project project)
     {
@@ -61,29 +46,5 @@ public class OpenedProjectData : PersistedEntity<OpenedProjectData>
             Projects.First(p => p.Path == project.RootProjectFolder.FullPath).LastOpenDate = DateTime.Now;
         }
         MarkDirty();
-    }
-
-    private OpenedProjectData ToDto()
-    {
-        return this;
-    }
-
-    private string FilePath()
-    {
-        return ProjectsDataPath;
-    }
-    
-    public void Save(ISerializer<OpenedProjectData> serializer)
-    {
-        if (IsDirty)
-        {
-            serializer.ToFile(ToDto(), FilePath());
-        }
-        MarkClean();
-    }
-
-    public static OpenedProjectData Load(ISerializer<OpenedProjectData> serializer)
-    {
-        return serializer.FromFile(ProjectsDataPath) ?? new OpenedProjectData();
     }
 }

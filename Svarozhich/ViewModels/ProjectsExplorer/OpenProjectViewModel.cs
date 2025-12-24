@@ -11,10 +11,11 @@ using Unit = System.Reactive.Unit;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
-public class OpenProjectViewModel(ProjectsService projectsService, IMediator mediator) : ViewModelBase
+public class OpenProjectViewModel(ProjectsAppService projectsAppService, RecentProjectsService recentProjectsService,
+    IMediator mediator) : ViewModelBase
 {
     [Reactive]
-    public ObservableCollection<ProjectData> Projects { get; set; } = new(projectsService.PreviouslyOpenedProjects());
+    public ObservableCollection<ProjectData> Projects { get; set; } = new(recentProjectsService.GetRecentProjects());
 
     [Reactive]
     public ProjectData? SelectedProject { get; set; }
@@ -27,7 +28,7 @@ public class OpenProjectViewModel(ProjectsService projectsService, IMediator med
 
     public async Task OpenProject()
     {
-        var project = projectsService.LoadFromFolder(SelectedProject!.Path);
+        var project = projectsAppService.LoadFromFolder(SelectedProject!.Path);
         await mediator.Publish(new ProjectOpenedEvent(project));
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Open));
     }

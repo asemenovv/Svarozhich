@@ -10,11 +10,11 @@ namespace Svarozhich.ViewModels.Controls.Editors;
 
 public class NodeEditorViewModel : NodifyEditorViewModelBase
 {
-    private readonly ProjectsService _projectsService;
+    private readonly ProjectsAppService _projectsAppService;
 
-    public NodeEditorViewModel(ProjectsService projectsService)
+    public NodeEditorViewModel(ProjectsAppService projectsAppService)
     {
-        _projectsService = projectsService;
+        _projectsAppService = projectsAppService;
         // Console.WriteLine(projectsService.CurrentProject.Name);
     }
 

@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace Svarozhich.Utils;
+namespace Svarozhich.Repository;
 
 public class XmlSerializer<T> : ISerializer<T>
 {

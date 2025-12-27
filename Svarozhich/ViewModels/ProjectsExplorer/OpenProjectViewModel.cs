@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Svarozhich.Models;
+using Svarozhich.Models.Project;
 using Svarozhich.Services;
 using Unit = System.Reactive.Unit;
 
@@ -26,8 +26,7 @@ public class OpenProjectViewModel(ProjectsAppService projectsAppService, RecentP
 
     public async Task OpenProject()
     {
-        var project = projectsAppService.LoadFromFolder(SelectedProject!.Path);
-        workspaceService.SetCurrentProject(project);
+        projectsAppService.LoadFromFolder(SelectedProject!.Path);
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Open));
     }
 }

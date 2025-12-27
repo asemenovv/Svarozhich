@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:projectsExplorer="clr-namespace:Svarozhich.ViewModels.ProjectsExplorer"
              xmlns:models="clr-namespace:Svarozhich.Models"
+             xmlns:project="clr-namespace:Svarozhich.Models.Project"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.ProjectsExplorer.OpenProjectView"
              x:DataType="projectsExplorer:OpenProjectViewModel">
@@ -13,7 +14,7 @@
                      ItemsSource="{Binding Projects}"
                      SelectedItem="{Binding SelectedProject}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="models:ProjectData">
+                    <DataTemplate DataType="project:ProjectData">
                         <TextBlock Text="{Binding Name}"></TextBlock>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

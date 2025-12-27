@@ -12,10 +12,10 @@ public class Scene : PersistedEntity<SceneDto>
     public Entity Root { get; }
     
     private const string Extension = ".xml";
-    private readonly Project? _project;
+    private readonly Project.Project? _project;
     private readonly string _projectLocalFolder;
 
-    internal Scene(Project? project, string name, string projectLocalFolder = "Scenes/")
+    internal Scene(Project.Project? project, string name, string projectLocalFolder = "Scenes/")
     {
         _project = project;// ?? throw new System.ArgumentNullException(nameof(project));
         _projectLocalFolder = projectLocalFolder.Trim() ?? throw new System.ArgumentNullException(nameof(projectLocalFolder));

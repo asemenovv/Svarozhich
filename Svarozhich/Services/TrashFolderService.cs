@@ -1,5 +1,7 @@
 using System;
 using Svarozhich.Models;
+using Svarozhich.Models.Project;
+using Svarozhich.Repository;
 
 namespace Svarozhich.Services;
 
@@ -8,12 +10,7 @@ public class TrashFolderService(ProjectLayout layout, WorkspaceService workspace
     public string TrashFolder()
     {
         return layout.TrashFolder(
-            workspaceService.CurrentProject ?? throw new ArgumentException("Project not opened")
+            workspaceService.ProjectTreeRoot?.FullPath ?? throw new ArgumentException("Project not opened")
         );
-    }
-
-    public string TrashFolder(Project project)
-    {
-        return layout.TrashFolder(project);
     }
 }

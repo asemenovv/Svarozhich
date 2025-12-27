@@ -1,15 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Extensions.Options;
 using Svarozhich.Models;
 using Svarozhich.Repository;
 using Svarozhich.Utils;
 
 namespace Svarozhich.Services;
 
-public class ProjectTemplatesService(ISerializer<ProjectTemplate> serializer,
-    ProjectLayout projectLayout, ProjectTemplateLayout projectTemplateLayout, InstallationFolderLayout installationFolderLayout)
+public class ProjectTemplatesService(ISerializer<ProjectTemplate> serializer, ProjectLayout projectLayout,
+    ProjectTemplateLayout projectTemplateLayout, InstallationFolderLayout installationFolderLayout,
+    FilesystemRepository filesystemRepository)
 {
     public IReadOnlyList<ProjectTemplate> LoadTemplates()
     {
@@ -25,16 +24,15 @@ public class ProjectTemplatesService(ISerializer<ProjectTemplate> serializer,
         return templates.AsReadOnly();
     }
 
-    public void ApplyTemplate(ProjectTemplate template, ProjectFileNode targetFolder)
+    public void ApplyTemplate(ProjectTemplate template, string targetFolder)
     {
         foreach (var folder in template.Folders)
         {
-            Directory.CreateDirectory(projectTemplateLayout.ChildFolder(targetFolder, folder));
+            var isAppFolder = folder == projectLayout.AppFolder(targetFolder);
+            filesystemRepository.CreateFolder(isAppFolder, targetFolder, folder);
         }
 
-        var editorSystemPath = new DirectoryInfo(projectLayout.AppFolder(targetFolder.FullPath));
-        editorSystemPath.Attributes |= FileAttributes.Hidden;
         if (template.PreviewImagePath != null)
-            File.Copy(template.PreviewImagePath, projectLayout.PreviewImage(targetFolder.FullPath));
+            filesystemRepository.Copy(template.PreviewImagePath, projectLayout.PreviewImage(targetFolder));
     }
 }

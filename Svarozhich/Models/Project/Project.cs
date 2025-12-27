@@ -1,28 +1,21 @@
 using System;
 using ReactiveUI.Fody.Helpers;
 
-namespace Svarozhich.Models;
+namespace Svarozhich.Models.Project;
 
 public class Project : PersistedEntity<ProjectBinding>
 {
     [Reactive]
     public string Name { get; private set; }
-    [Reactive]
-    public ProjectFileNode RootProjectFolder { get; private set; }
     
-    public Project(string name, ProjectFileNode rootFolder)
+    public Project(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
         }
-
-        if (!rootFolder.Valid())
-        {
-            throw new ArgumentException("Root folder should exist.", nameof(rootFolder));
-        }
+        
         Name = name.Trim();
-        RootProjectFolder = rootFolder;
         MarkDirty();
     }
 

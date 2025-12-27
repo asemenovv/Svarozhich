@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Svarozhich.Models;
+using Svarozhich.Models.Project;
 using Svarozhich.Repository;
 using Svarozhich.Services;
 using Svarozhich.Utils;
@@ -69,6 +70,8 @@ public partial class App : Application
         services.AddSingleton<TrashFolderService>();
 
         services.AddSingleton<ProjectRepository>();
+        services.AddSingleton<FilesystemRepository>();
+        services.AddSingleton<ProjectTreeBuilder>();
         services.AddSingleton<ProjectLayout>();
         services.AddSingleton<ProjectTemplateLayout>();
         services.AddSingleton<InstallationFolderLayout>();

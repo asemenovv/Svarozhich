@@ -1,4 +1,4 @@
-namespace Svarozhich.Utils;
+namespace Svarozhich.Repository;
 
 public interface ISerializer<T>
 {

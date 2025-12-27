@@ -11,9 +11,4 @@ public class ProjectTemplateLayout
         return Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(),
             "preview.png");
     }
-
-    public string ChildFolder(ProjectFileNode targetFolder, string folder)
-    {
-        return Path.Combine(targetFolder.FullPath, folder);
-    }
 }

@@ -77,11 +77,10 @@ public class NewProjectViewModel : ViewModelBase
 
     private async Task CreateProject()
     {
+        if (SelectedTemplate == null) return;
         var projFolder = _projectsAppService
-            .CreateProjectFromTemplate(ProjectName, ProjectPath, SelectedTemplate)
-            .RootProjectFolder;
-        var project = _projectsAppService.LoadFromFolder(projFolder.FullPath);
-        await _mediator.Publish(new ProjectOpenedEvent(project));
+            .CreateProjectFromTemplate(ProjectName, ProjectPath, SelectedTemplate);
+        _projectsAppService.LoadFromFolder(projFolder.FullPath);
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Create));
     }
 }

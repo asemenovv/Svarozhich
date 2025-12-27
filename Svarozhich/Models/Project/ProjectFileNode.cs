@@ -95,30 +95,12 @@ public class ProjectFileNode : ReactiveObject
         Parent = parent;
         Name = Path.GetFileName(fullPath);
         FullPath = fullPath;
-        NodeType = nodeType;
-        Refresh();
+        NodeType = nodeType; 
     }
 
     public ProjectFileNode Child(string name)
     {
         return Children.First(c => c.Name == name);
-    }
-
-    public List<ProjectFileNode> LookupFiles(ProjectFileNodeType type)
-    {
-        var files = new List<string>();
-        foreach (var extension in type.GetExtensions())
-        {
-            files.AddRange(Directory.GetFiles(FullPath, $"*{extension}", SearchOption.TopDirectoryOnly));
-        }
-        return files.Select(
-            file => new ProjectFileNode(file, this, type)
-        ).ToList();
-    }
-
-    public bool Valid()
-    {
-        return Directory.Exists(FullPath);
     }
 
     public string RelativePath()
@@ -147,46 +129,5 @@ public class ProjectFileNode : ReactiveObject
         var node = new ProjectFileNode(path, this, ProjectFileNodeType.Folder);
         Children.Add(node);
         return node;
-    }
-
-    public void CreateIfNotExist()
-    {
-        if (IsFolder && !Directory.Exists(FullPath))
-        {
-            Directory.CreateDirectory(FullPath);
-        }
-    }
-
-    public void Refresh()
-    {
-        if (NodeType is ProjectFileNodeType.Folder or ProjectFileNodeType.RootFolder)
-        {
-            ScanFolder(this);
-        }
-    }
-
-    private List<ProjectFileNode> LookupFolders()
-    {
-        return Directory.GetDirectories(FullPath)
-            .Select(d => new ProjectFileNode(d, this, ProjectFileNodeType.Folder))
-            .Where(d => !d.IsHidden())
-            .ToList();
-    }
-
-    private bool IsHidden()
-    {
-        var directoryInfo = new DirectoryInfo(FullPath);
-        return directoryInfo.Attributes.HasFlag(FileAttributes.Hidden);
-    }
-
-    private void ScanFolder(ProjectFileNode folder)
-    {
-        if (!IsFolder || IsHidden()) return;
-        folder.Children.Clear();
-        folder.Children.AddRange(folder.LookupFolders());
-        foreach (var type in Enum.GetValues(typeof(ProjectFileNodeType)).Cast<ProjectFileNodeType>())
-        {
-            folder.Children.AddRange(folder.LookupFiles(type));
-        }
     }
 }

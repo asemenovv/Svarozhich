@@ -32,7 +32,10 @@ public class MainWindowViewModel : ViewModelBase
         UndoRedo = undoRedoService;
         NodeEditorViewModel = nodeEditorViewModel;
         this.WhenAnyValue(vm => vm.WorkspaceService.CurrentProject)
-            .Select(p => p is null ? "Svarozhich" : $"Svarozhich - {p.Name}")
+            .Select(p => p is null
+                ? Observable.Return("Svarozhich")
+                : p.WhenAnyValue(x => x.Name).Select(name => $"Svarozhich - {name}"))
+            .Switch()
             .ToPropertyEx(this, vm => vm.WindowTitle);
         var canUndo = this.WhenAnyValue(vm => vm.UndoRedo.CanUndo);
         var canRedo = this.WhenAnyValue(vm => vm.UndoRedo.CanRedo);
@@ -46,6 +49,5 @@ public class MainWindowViewModel : ViewModelBase
 
         var op = new RenameProjectOperation(WorkspaceService.CurrentProject, newName);
         UndoRedo.Do(op);
-        this.RaisePropertyChanged(nameof(WindowTitle));
     }
 }

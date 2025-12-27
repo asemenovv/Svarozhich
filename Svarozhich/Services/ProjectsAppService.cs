@@ -1,43 +1,46 @@
+using System;
 using Svarozhich.Models;
+using Svarozhich.Models.Project;
 using Svarozhich.Repository;
 
 namespace Svarozhich.Services;
 
 public class ProjectsAppService(
     ProjectRepository repository,
+    ProjectTreeBuilder treeBuilder,
     RecentProjectsService recentsService,
     WorkspaceService workspace,
-    ProjectLayout projectLayout,
-    ProjectTemplatesService templatesService)
+    ProjectTemplatesService templatesService,
+    FilesystemRepository filesystemRepository)
 {
-    public Project CreateProjectFromTemplate(string name, string projectsPath, ProjectTemplate template)
+    public ProjectFileNode CreateProjectFromTemplate(string name, string projectsPath, ProjectTemplate template)
     {
-        var path = projectLayout.NewProjectFolder(projectsPath, name);
-        var rootFolder = new ProjectFileNode(path);
-        rootFolder.CreateIfNotExist();
-        var project = new Project(name, rootFolder);
+        var folderResult = filesystemRepository.CreateFolder(false, projectsPath, name);
+        templatesService.ApplyTemplate(template, folderResult.FullPath);
+        var project = new Project(name);
         project.CreateScene("Default Scene");
-        templatesService.ApplyTemplate(template, rootFolder);
-        repository.Save(project);
-        workspace.SetCurrentProject(project);
-        recentsService.MarkOpened(project);
-        return project;
+        repository.Save(folderResult.FullPath, project);
+        var filesTree = treeBuilder.Build(folderResult.FullPath);
+        workspace.OpenProject(project, filesTree);
+        recentsService.MarkOpened(project, filesTree);
+        return filesTree;
     }
 
     public Project LoadFromFolder(string path)
     {
-        var rootFolder = new ProjectFileNode(path);
-        var project = repository.LoadFromFolder(rootFolder);
-        recentsService.MarkOpened(project);
-        workspace.SetCurrentProject(project);
+        var project = repository.LoadFromFolder(path);
+        var filesTree = treeBuilder.Build(path);
+        recentsService.MarkOpened(project, filesTree);
+        workspace.OpenProject(project, filesTree);
         return project;
     }
     
     public void SaveCurrent()
     {
-        var p = workspace.CurrentProject;
-        if (p is null) return;
-        repository.Save(p);
+        var project = workspace.CurrentProject;
+        var path = workspace.ProjectTreeRoot?.FullPath;
+        if (project == null || path == null) return;
+        repository.Save(path, project);
     }
     
     public void CloseProject()

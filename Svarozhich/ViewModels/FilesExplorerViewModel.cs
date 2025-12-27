@@ -1,14 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Dto;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
@@ -66,7 +60,7 @@ public class FilesExplorerViewModel : ViewModelBase
         CreateSceneInSelectedFolderCommand = ReactiveCommand.CreateFromTask(CreateSceneInSelectedNode, isFolderSelected);
         RenameCommand = ReactiveCommand.CreateFromTask(RenameSelectedNode, canBeRenamed);
         DeleteSelectedNodeCommand = ReactiveCommand.CreateFromTask(DeleteSelectedNode, isDeletable);
-        RefreshCommand = ReactiveCommand.Create(() => WorkspaceService.CurrentProject?.RootProjectFolder.Refresh());
+        RefreshCommand = ReactiveCommand.Create(() => WorkspaceService.Refresh());
     }
 
     public async Task CreateFolderIn(ProjectFileNode parentFolder)
@@ -75,7 +69,7 @@ public class FilesExplorerViewModel : ViewModelBase
         if (string.IsNullOrEmpty(response?.Text)) return;
         if (response.FlagChecked != null && response.FlagChecked.Value)
         {
-            parentFolder = WorkspaceService.CurrentProject!.RootProjectFolder;
+            parentFolder = WorkspaceService.ProjectTreeRoot!;
         }
         
         var operation = new CreateFolderOperation(parentFolder, response.Text);
@@ -124,7 +118,7 @@ public class FilesExplorerViewModel : ViewModelBase
     {
         if (SelectedNode is not { NodeType: ProjectFileNodeType.Folder })
         {
-            await CreateFolderIn(WorkspaceService.CurrentProject?.RootProjectFolder!);
+            await CreateFolderIn(WorkspaceService.ProjectTreeRoot!);
         }
         else
         {

@@ -7,11 +7,11 @@ namespace Svarozhich.Models.Nodes;
 
 public class NodeGraph : PersistedEntity<NodeGraphBinding>
 {
-    private readonly Project _project;
+    private readonly Project.Project _project;
     private readonly List<Node> _nodes = new();
     private readonly List<Connection> _connections = new();
 
-    public NodeGraph(Project project)
+    public NodeGraph(Project.Project project)
     {
         _project = project;
     }

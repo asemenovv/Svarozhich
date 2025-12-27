@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Avalonia.Media.Imaging;
 
-namespace Svarozhich.Models;
+namespace Svarozhich.Models.Project;
 
 [DataContract]
 public class ProjectData
@@ -30,20 +30,20 @@ public class OpenedProjectData : PersistedEntity<OpenedProjectData>
     [DataMember(Name = "Projects")]
     public List<ProjectData> Projects { get; set; } = [];
 
-    public void MarkOpened(Project project)
+    public void MarkOpened(Models.Project.Project project, string projectPath)
     {
-        if (Projects.All(p => p.Path != project.RootProjectFolder.FullPath))
+        if (Projects.All(p => p.Path != projectPath))
         {
             Projects.Add(new ProjectData()
             {
-                Path = project.RootProjectFolder.FullPath,
+                Path = projectPath,
                 Name = project.Name,
                 LastOpenDate = DateTime.Now
             });
         }
         else
         {
-            Projects.First(p => p.Path == project.RootProjectFolder.FullPath).LastOpenDate = DateTime.Now;
+            Projects.First(p => p.Path == projectPath).LastOpenDate = DateTime.Now;
         }
         MarkDirty();
     }

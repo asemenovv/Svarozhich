@@ -9,21 +9,27 @@ namespace Svarozhich.Services;
 public class RecentProjectsService
 {
     private readonly ISerializer<OpenedProjectData> _serializer;
+    private readonly ProjectLayout _projectLayout;
     private readonly InstallationFolderLayout _installationFolderLayout;
 
-    private readonly OpenedProjectData _openedProjects;
+    private OpenedProjectData _openedProjects;
     
-    public RecentProjectsService(ISerializer<OpenedProjectData> serializer, ProjectLayout layout,
+    public RecentProjectsService(ISerializer<OpenedProjectData> serializer, ProjectLayout projectLayout,
         InstallationFolderLayout installationFolderLayout)
     {
         _serializer = serializer;
+        _projectLayout = projectLayout;
         _installationFolderLayout = installationFolderLayout;
+        Load();
+    }
 
+    private void Load()
+    {
         _openedProjects = _serializer.FromFile(_installationFolderLayout.RecentsProjectsFile()) ?? new OpenedProjectData();
         _openedProjects.Projects = _openedProjects.Projects
-            .Where(p => ValidateProjectPath(new ProjectFileNode(p.Path)))
+            .Where(p => ValidateProjectPath(p.Path))
             .ToList();
-        _openedProjects.Projects.ForEach(p => p.LoadImages(layout.PreviewImage(p.Path)));
+        _openedProjects.Projects.ForEach(p => p.LoadImages(_projectLayout.PreviewImage(p.Path)));
     }
 
     public void MarkOpened(Project project)
@@ -40,15 +46,15 @@ public class RecentProjectsService
             .AsReadOnly();
     }
 
-    private bool ValidateProjectPath(ProjectFileNode projectPath)
+    private bool ValidateProjectPath(string projectPath)
     {
-        if (!Directory.Exists(projectPath.FullPath))
+        if (!Directory.Exists(projectPath))
         {
             return false;
         }
-
-        return projectPath.LookupFiles(ProjectFileNodeType.ProjectFile)
-            .Count != 0;
+        return new ProjectFileNode(projectPath)
+            .LookupFiles(ProjectFileNodeType.ProjectFile)
+            .Count == 1;
     }
 
     private void Save()

@@ -189,9 +189,4 @@ public class ProjectFileNode : ReactiveObject
             folder.Children.AddRange(folder.LookupFiles(type));
         }
     }
-
-    public string FilePath(string fileName)
-    {
-        return Path.Combine(FullPath, fileName);
-    }
 }

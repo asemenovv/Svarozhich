@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.Options;
 using Svarozhich.Models;
+using Svarozhich.Repository;
 using Svarozhich.Utils;
 
 namespace Svarozhich.Services;
 
-public class ProjectTemplatesService
+public class ProjectTemplatesService(ISerializer<ProjectTemplate> serializer,
+    ProjectLayout projectLayout, ProjectTemplateLayout projectTemplateLayout, InstallationFolderLayout installationFolderLayout)
 {
-    private static readonly string TemplatePath =
-        $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/RiderProjects/Svarozhich/Svarozhich/InstallationFiles/Templates";
-    
     public IReadOnlyList<ProjectTemplate> LoadTemplates()
     {
-        var templateFiles = Directory.GetFiles(TemplatePath, "template.xml", SearchOption.AllDirectories);
+        var templateFiles = installationFolderLayout.LookupTemplateFiles();
         List<ProjectTemplate> templates = [];
         foreach (var templateFile in templateFiles)
         {
-            var template = new XmlSerializer<ProjectTemplate>().FromFile(templateFile);
+            var template = serializer.FromFile(templateFile);
             if (template == null) continue;
-            template.PreviewImagePath = Path.Combine(Path.GetDirectoryName(templateFile) ?? throw new InvalidOperationException(), "preview.png");
+            template.PreviewImagePath = projectTemplateLayout.PreviewImage(templateFile);
             templates.Add(template);
         }
         return templates.AsReadOnly();
@@ -27,6 +27,14 @@ public class ProjectTemplatesService
 
     public void ApplyTemplate(ProjectTemplate template, ProjectFileNode targetFolder)
     {
-        template.CreateFolders(targetFolder);
+        foreach (var folder in template.Folders)
+        {
+            Directory.CreateDirectory(projectTemplateLayout.ChildFolder(targetFolder, folder));
+        }
+
+        var editorSystemPath = new DirectoryInfo(projectLayout.AppFolder(targetFolder.FullPath));
+        editorSystemPath.Attributes |= FileAttributes.Hidden;
+        if (template.PreviewImagePath != null)
+            File.Copy(template.PreviewImagePath, projectLayout.PreviewImage(targetFolder.FullPath));
     }
 }

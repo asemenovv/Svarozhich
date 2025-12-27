@@ -18,9 +18,9 @@ public class ProjectData
     [IgnoreDataMember]
     public Bitmap? PreviewImage { get; set; }
 
-    public void LoadImages()
+    public void LoadImages(string previewImagePath)
     {
-        PreviewImage = new Bitmap(System.IO.Path.Combine(Path, ".Svarozhich", "preview.png"));
+        PreviewImage = new Bitmap(previewImagePath);
     }
 }
 

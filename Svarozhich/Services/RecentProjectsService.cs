@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,29 +8,22 @@ namespace Svarozhich.Services;
 
 public class RecentProjectsService
 {
-    private static readonly string ProjectsDataPath;
-    
-    private readonly OpenedProjectData _openedProjects;
+    private readonly ISerializer<OpenedProjectData> _serializer;
+    private readonly InstallationFolderLayout _installationFolderLayout;
 
-    static RecentProjectsService()
-    {
-        var applicationDataPath = Path.Combine(
-            $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}", "Svarozhich");
-        if (!Directory.Exists(applicationDataPath))
-        {
-            Directory.CreateDirectory(applicationDataPath);
-        }
-        ProjectsDataPath = Path.Combine(applicationDataPath, "Projects.xml");
-    }
+    private readonly OpenedProjectData _openedProjects;
     
-    public RecentProjectsService()
+    public RecentProjectsService(ISerializer<OpenedProjectData> serializer, ProjectLayout layout,
+        InstallationFolderLayout installationFolderLayout)
     {
-        _openedProjects = new XmlSerializer<OpenedProjectData>()
-            .FromFile(ProjectsDataPath) ?? new OpenedProjectData();
+        _serializer = serializer;
+        _installationFolderLayout = installationFolderLayout;
+
+        _openedProjects = _serializer.FromFile(_installationFolderLayout.RecentsProjectsFile()) ?? new OpenedProjectData();
         _openedProjects.Projects = _openedProjects.Projects
             .Where(p => ValidateProjectPath(new ProjectFileNode(p.Path)))
             .ToList();
-        _openedProjects.Projects.ForEach(p => p.LoadImages());
+        _openedProjects.Projects.ForEach(p => p.LoadImages(layout.PreviewImage(p.Path)));
     }
 
     public void MarkOpened(Project project)
@@ -63,8 +55,7 @@ public class RecentProjectsService
     {
         if (_openedProjects.IsDirty)
         {
-            new XmlSerializer<OpenedProjectData>()
-                .ToFile(_openedProjects, ProjectsDataPath);
+            _serializer.ToFile(_openedProjects, _installationFolderLayout.RecentsProjectsFile());
         }
         _openedProjects.MarkClean();
     }

@@ -7,10 +7,12 @@ public class ProjectsAppService(
     ProjectRepository repository,
     RecentProjectsService recentsService,
     WorkspaceService workspace,
+    ProjectLayout projectLayout,
     ProjectTemplatesService templatesService)
 {
-    public Project CreateProjectFromTemplate(string name, string path, ProjectTemplate template)
+    public Project CreateProjectFromTemplate(string name, string projectsPath, ProjectTemplate template)
     {
+        var path = projectLayout.NewProjectFolder(projectsPath, name);
         var rootFolder = new ProjectFileNode(path);
         rootFolder.CreateIfNotExist();
         var project = new Project(name, rootFolder);

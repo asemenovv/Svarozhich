@@ -22,7 +22,7 @@ public class FilesExplorerViewModel : ViewModelBase
 {
     private readonly UndoRedoService _undoRedoService;
     private readonly TrashFolderService _trashFolderService;
-    [Reactive] public Project? Project { get; set; }
+    public WorkspaceService WorkspaceService { get; private set; }
     [Reactive] public ProjectFileNode? SelectedNode { get; set; }
     public Interaction<ProjectFileNode, bool> DeleteConfirmationInteraction { get; }
     public Interaction<ProjectFileNode, InputDialogResponse?> FolderNameDialogInteraction { get; }
@@ -41,10 +41,12 @@ public class FilesExplorerViewModel : ViewModelBase
     
     public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
-    public FilesExplorerViewModel(UndoRedoService undoRedoService, TrashFolderService trashFolderService)
+    public FilesExplorerViewModel(UndoRedoService undoRedoService, TrashFolderService trashFolderService,
+        WorkspaceService workspaceService)
     {
         _undoRedoService = undoRedoService;
         _trashFolderService = trashFolderService;
+        WorkspaceService = workspaceService;
         DeleteConfirmationInteraction = new Interaction<ProjectFileNode, bool>();
         FolderNameDialogInteraction = new Interaction<ProjectFileNode, InputDialogResponse?>();
         OpenFolderInFinderCommand = ReactiveCommand.Create<ProjectFileNode>(OpenFolderInFinder);
@@ -64,7 +66,7 @@ public class FilesExplorerViewModel : ViewModelBase
         CreateSceneInSelectedFolderCommand = ReactiveCommand.CreateFromTask(CreateSceneInSelectedNode, isFolderSelected);
         RenameCommand = ReactiveCommand.CreateFromTask(RenameSelectedNode, canBeRenamed);
         DeleteSelectedNodeCommand = ReactiveCommand.CreateFromTask(DeleteSelectedNode, isDeletable);
-        RefreshCommand = ReactiveCommand.Create(() => Project?.RootProjectFolder.Refresh());
+        RefreshCommand = ReactiveCommand.Create(() => WorkspaceService.CurrentProject?.RootProjectFolder.Refresh());
     }
 
     public async Task CreateFolderIn(ProjectFileNode parentFolder)
@@ -73,7 +75,7 @@ public class FilesExplorerViewModel : ViewModelBase
         if (string.IsNullOrEmpty(response?.Text)) return;
         if (response.FlagChecked != null && response.FlagChecked.Value)
         {
-            parentFolder = Project!.RootProjectFolder;
+            parentFolder = WorkspaceService.CurrentProject!.RootProjectFolder;
         }
         
         var operation = new CreateFolderOperation(parentFolder, response.Text);
@@ -88,7 +90,7 @@ public class FilesExplorerViewModel : ViewModelBase
         {
             var delete = new CompositeOperation($"Delete {(node.IsFolder ? "Folder" : "File")}", [
                 new RemoveNodeFromFilesTreeOperation(node),
-                new DeleteNodeFromDiskOperation(node, _trashFolderService.TrashFolder(Project!))
+                new DeleteNodeFromDiskOperation(node, _trashFolderService.TrashFolder())
             ]);
             _undoRedoService.Do(delete);
         }
@@ -122,7 +124,7 @@ public class FilesExplorerViewModel : ViewModelBase
     {
         if (SelectedNode is not { NodeType: ProjectFileNodeType.Folder })
         {
-            await CreateFolderIn(Project?.RootProjectFolder!);
+            await CreateFolderIn(WorkspaceService.CurrentProject?.RootProjectFolder!);
         }
         else
         {

@@ -1,18 +1,19 @@
+using System;
 using Svarozhich.Models;
 
 namespace Svarozhich.Services;
 
-public class TrashFolderService
+public class TrashFolderService(ProjectLayout layout, WorkspaceService workspaceService)
 {
-    private readonly ProjectLayout _layout;
-
-    public TrashFolderService(ProjectLayout layout)
+    public string TrashFolder()
     {
-        _layout = layout;
+        return layout.TrashFolder(
+            workspaceService.CurrentProject ?? throw new ArgumentException("Project not opened")
+        );
     }
 
     public string TrashFolder(Project project)
     {
-        return _layout.TrashFolder(project);
+        return layout.TrashFolder(project);
     }
 }

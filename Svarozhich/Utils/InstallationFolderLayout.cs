@@ -11,7 +11,8 @@ public class InstallationFolderLayout(IOptions<AppSettings> options)
 
     private string RootFolder()
     {
-        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "/Svarozhich");
+        var appsFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        return Path.Combine(appsFolder, "Svarozhich");
     }
 
     private string SubFolder(string path)

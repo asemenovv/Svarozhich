@@ -79,7 +79,7 @@
                 <iconPacks:PackIconPhosphorIcons Kind="ArrowClockwise" Width="16" Height="16" Foreground="LightCoral" />
             </Button>
         </StackPanel>
-        <TreeView ItemsSource="{Binding Path=Project.RootProjectFolder.Children, FallbackValue={x:Null}}"
+        <TreeView ItemsSource="{Binding Path=WorkspaceService.CurrentProject.RootProjectFolder.Children, FallbackValue={x:Null}}"
                   SelectedItem="{Binding SelectedNode}">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="models:ProjectFileNode">

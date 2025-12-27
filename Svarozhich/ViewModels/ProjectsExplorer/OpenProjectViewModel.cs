@@ -1,18 +1,16 @@
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
-using Svarozhich.Models.Events;
 using Svarozhich.Services;
 using Unit = System.Reactive.Unit;
 
 namespace Svarozhich.ViewModels.ProjectsExplorer;
 
 public class OpenProjectViewModel(ProjectsAppService projectsAppService, RecentProjectsService recentProjectsService,
-    IMediator mediator) : ViewModelBase
+    WorkspaceService workspaceService) : ViewModelBase
 {
     [Reactive]
     public ObservableCollection<ProjectData> Projects { get; set; } = new(recentProjectsService.GetRecentProjects());
@@ -29,7 +27,7 @@ public class OpenProjectViewModel(ProjectsAppService projectsAppService, RecentP
     public async Task OpenProject()
     {
         var project = projectsAppService.LoadFromFolder(SelectedProject!.Path);
-        await mediator.Publish(new ProjectOpenedEvent(project));
+        workspaceService.SetCurrentProject(project);
         await CloseDialogInteraction.Handle(new ProjectExploreResult(ProjectExploreResultMode.Open));
     }
 }

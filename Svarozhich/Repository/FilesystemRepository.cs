@@ -44,7 +44,7 @@ public class FilesystemRepository
         }
     }
 
-    public List<string> EnumerateFiles(string path, string extension = ".*")
+    public List<string> EnumerateFiles(string path, string extension = "")
     {
         return Directory.GetFiles(path, $"*{extension}", SearchOption.TopDirectoryOnly).ToList();
     }
@@ -53,5 +53,10 @@ public class FilesystemRepository
     {
         var directoryInfo = new DirectoryInfo(path);
         return directoryInfo.Attributes.HasFlag(FileAttributes.Hidden);
+    }
+
+    public string GetExtension(string filePath)
+    {
+        return Path.GetExtension(filePath);
     }
 }

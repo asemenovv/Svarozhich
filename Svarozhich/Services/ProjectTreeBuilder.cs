@@ -29,16 +29,17 @@ public class ProjectTreeBuilder(FilesystemRepository filesystem)
             folderNode.Children.Add(childFolder);
             BuildChildren(childFolder);
         }
-        foreach (var type in Enum.GetValues(typeof(ProjectFileNodeType)).Cast<ProjectFileNodeType>())
+        foreach (var file in filesystem.EnumerateFiles(folderNode.FullPath))
         {
-            foreach (var extension in type.GetExtensions())
-            {
-                folderNode.Children.AddRange(
-                    filesystem.EnumerateFiles(folderNode.FullPath, extension)
-                        .Select(f  => new ProjectFileNode(f, folderNode, type))
-                        .ToList()
-                );
-            }
+            var type = ProjectFileNodeTypeExtensions.FromPath(file);
+            if (type is null) continue;
+            folderNode.Children.Add(new ProjectFileNode(file, folderNode, type.Value));
         }
+        var sortedFiles = folderNode.Children
+            .OrderByDescending(n => n.IsFolder)
+            .ThenBy(n => n.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        folderNode.Children.Clear();
+        folderNode.Children.AddRange(sortedFiles);
     }
 }

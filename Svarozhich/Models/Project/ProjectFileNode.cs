@@ -51,6 +51,23 @@ public static class ProjectFileNodeTypeExtensions
         var attr = field.GetCustomAttribute<FileExtensionsAttribute>();
         return attr?.CanBeRenamed ?? false;
     }
+
+    public static ProjectFileNodeType? FromPath(string fullPath)
+    {
+        if (Directory.Exists(fullPath)) return ProjectFileNodeType.Folder;
+        var ext = Path.GetExtension(fullPath).ToLowerInvariant();
+
+        return ext switch
+        {
+            ".svch" => ProjectFileNodeType.ProjectFile,
+            ".xml" => ProjectFileNodeType.Scene,
+            ".png" or ".jpg" or ".jpeg" or ".tga" or ".bmp" => ProjectFileNodeType.Texture,
+            ".vert" or ".frag" or ".glsl" or ".hlsl" => ProjectFileNodeType.Shader,
+            ".obj"   => ProjectFileNodeType.Mesh,
+            ".cs" or ".lua"   => ProjectFileNodeType.Script,
+            _ => null
+        };
+    }
 }
 
 public enum ProjectFileNodeType

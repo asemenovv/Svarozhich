@@ -16,8 +16,6 @@ public class UndoRedoService : ReactiveObject
     [Reactive]
     public bool CanRedo { get; private set; }
 
-    private Guid _id = Guid.NewGuid();
-
     public void Do(IUndoableOperation op)
     {
         op.Do();

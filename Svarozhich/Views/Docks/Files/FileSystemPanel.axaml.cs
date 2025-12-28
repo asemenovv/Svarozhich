@@ -10,6 +10,7 @@ using MsBox.Avalonia.Models;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using Svarozhich.Models;
+using Svarozhich.Models.Project;
 using Svarozhich.ViewModels;
 using Svarozhich.Views.Controls.Dialogs;
 

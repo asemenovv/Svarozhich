@@ -5,6 +5,7 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:models="clr-namespace:Svarozhich.Models"
              xmlns:viewModels="clr-namespace:Svarozhich.ViewModels"
+             xmlns:project="clr-namespace:Svarozhich.Models.Project"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Svarozhich.Views.Docks.Files.FileSystemPanel"
              x:DataType="viewModels:FilesExplorerViewModel"
@@ -82,7 +83,7 @@
         <TreeView ItemsSource="{Binding Path=WorkspaceService.ProjectTreeRoot.Children, FallbackValue={x:Null}}"
                   SelectedItem="{Binding SelectedNode}">
             <TreeView.ItemTemplate>
-                <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="models:ProjectFileNode">
+                <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="project:ProjectFileNode">
                     <StackPanel Orientation="Horizontal" Spacing="4" Height="16">
                         <StackPanel.ContextMenu>
                             <ContextMenu>

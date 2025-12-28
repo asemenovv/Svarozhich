@@ -7,6 +7,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
 using Svarozhich.Models.Commands;
+using Svarozhich.Models.Project;
 using Svarozhich.Services;
 using Svarozhich.Views.Controls.Dialogs;
 
@@ -14,8 +15,7 @@ namespace Svarozhich.ViewModels;
 
 public class FilesExplorerViewModel : ViewModelBase
 {
-    private readonly UndoRedoService _undoRedoService;
-    private readonly TrashFolderService _trashFolderService;
+    private readonly CommandsFactory _commandsFactory;
     public WorkspaceService WorkspaceService { get; private set; }
     [Reactive] public ProjectFileNode? SelectedNode { get; set; }
     public Interaction<ProjectFileNode, bool> DeleteConfirmationInteraction { get; }
@@ -35,11 +35,9 @@ public class FilesExplorerViewModel : ViewModelBase
     
     public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
-    public FilesExplorerViewModel(UndoRedoService undoRedoService, TrashFolderService trashFolderService,
-        WorkspaceService workspaceService)
+    public FilesExplorerViewModel(WorkspaceService workspaceService, CommandsFactory commandsFactory)
     {
-        _undoRedoService = undoRedoService;
-        _trashFolderService = trashFolderService;
+        _commandsFactory = commandsFactory;
         WorkspaceService = workspaceService;
         DeleteConfirmationInteraction = new Interaction<ProjectFileNode, bool>();
         FolderNameDialogInteraction = new Interaction<ProjectFileNode, InputDialogResponse?>();
@@ -71,9 +69,7 @@ public class FilesExplorerViewModel : ViewModelBase
         {
             parentFolder = WorkspaceService.ProjectTreeRoot!;
         }
-        
-        var operation = new CreateFolderOperation(parentFolder, response.Text);
-        _undoRedoService.Do(operation);
+        _commandsFactory.CreateFolder(parentFolder, response.Text);
         Console.Write($"Creating '{response}' folder in '{parentFolder.RelativePath()}'");
     }
 
@@ -82,11 +78,7 @@ public class FilesExplorerViewModel : ViewModelBase
         var deleteConfirmed = await DeleteConfirmationInteraction.Handle(node);
         if (deleteConfirmed)
         {
-            var delete = new CompositeOperation($"Delete {(node.IsFolder ? "Folder" : "File")}", [
-                new RemoveNodeFromFilesTreeOperation(node),
-                new DeleteNodeFromDiskOperation(node, _trashFolderService.TrashFolder())
-            ]);
-            _undoRedoService.Do(delete);
+            _commandsFactory.DeleteFilesystemNode(node);
         }
     }
 

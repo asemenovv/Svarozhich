@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using DynamicData;
 using Svarozhich.Models;
+using Svarozhich.Models.Project;
 using Svarozhich.Repository;
 
 namespace Svarozhich.Services;

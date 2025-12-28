@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,8 +10,7 @@ public class FilesystemRepository
 {
     public CreateFolderResult CreateFolder(bool hidden = false, params string[] paths)
     {
-        var path = Path.Combine(paths);
-        
+        var path = CombinePath(paths);
         if (Directory.Exists(path)) return new CreateFolderResult(false, path);
         Directory.CreateDirectory(path);
         
@@ -23,9 +21,30 @@ public class FilesystemRepository
         return new CreateFolderResult(true, path);
     }
 
+    public static string CombinePath(params string[] paths)
+    {
+        return Path.Combine(paths);
+    }
+
+    public static string GetExtension(string filePath)
+    {
+        return Path.GetExtension(filePath);
+    }
+
+    public static string GetFileName(string fullPath)
+    {
+        return Path.GetFileName(fullPath);
+    }
+
     public void Copy(string srcPath, string destPath)
     {
         File.Copy(srcPath, destPath);
+    }
+
+    public void Move(string srcPath, string destPath)
+    {
+        if (!Directory.Exists(srcPath)) return;
+        Directory.Move(srcPath, destPath);
     }
 
     public List<string> EnumerateDirectories(string path, bool includeHidden = false)
@@ -55,8 +74,8 @@ public class FilesystemRepository
         return directoryInfo.Attributes.HasFlag(FileAttributes.Hidden);
     }
 
-    public string GetExtension(string filePath)
+    public void DeleteFolder(string fullPath)
     {
-        return Path.GetExtension(filePath);
+        Directory.Delete(fullPath, true);
     }
 }

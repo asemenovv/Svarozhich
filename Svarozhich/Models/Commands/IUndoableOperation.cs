@@ -8,3 +8,10 @@ public interface IUndoableOperation
 
     void Undo();
 }
+
+public class NopOperation : IUndoableOperation
+{
+    public string Name => "NOP";
+    public void Do() {}
+    public void Undo() {}
+}

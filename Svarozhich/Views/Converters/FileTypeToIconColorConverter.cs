@@ -3,6 +3,7 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using Svarozhich.Models;
+using Svarozhich.Models.Project;
 
 namespace Svarozhich.Views.Converters;
 

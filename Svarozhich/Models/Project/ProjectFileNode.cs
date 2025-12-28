@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Svarozhich.Repository;
 
-namespace Svarozhich.Models;
+namespace Svarozhich.Models.Project;
 
 [AttributeUsage(AttributeTargets.Field)]
 public class FileExtensionsAttribute(bool deletable = false, bool canBeRenamed = true, params string[] extensions) : Attribute
@@ -55,7 +55,7 @@ public static class ProjectFileNodeTypeExtensions
     public static ProjectFileNodeType? FromPath(string fullPath)
     {
         if (Directory.Exists(fullPath)) return ProjectFileNodeType.Folder;
-        var ext = Path.GetExtension(fullPath).ToLowerInvariant();
+        var ext = FilesystemRepository.GetExtension(fullPath).ToLowerInvariant();
 
         return ext switch
         {
@@ -110,7 +110,7 @@ public class ProjectFileNode : ReactiveObject
         ProjectFileNodeType nodeType = ProjectFileNodeType.RootFolder)
     {
         Parent = parent;
-        Name = Path.GetFileName(fullPath);
+        Name = FilesystemRepository.GetFileName(fullPath);
         FullPath = fullPath;
         NodeType = nodeType; 
     }
@@ -128,21 +128,17 @@ public class ProjectFileNode : ReactiveObject
 
     public void Delete()
     {
-        Directory.Delete(FullPath, true);
         Parent?.Children.Remove(this);
     }
 
     public void MoveTo(string destinationPath)
     {
-        if (!Directory.Exists(FullPath)) return;
-        Directory.Move(FullPath, destinationPath);
         FullPath = destinationPath;
     }
 
     public ProjectFileNode CreateChildFolder(string name)
     {
-        var path = Path.Combine(FullPath, name);
-        Directory.CreateDirectory(path);
+        var path = FilesystemRepository.CombinePath(FullPath, name);
         var node = new ProjectFileNode(path, this, ProjectFileNodeType.Folder);
         Children.Add(node);
         return node;

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Svarozhich.Models;
+using Svarozhich.Models.Commands;
 using Svarozhich.Models.Project;
 using Svarozhich.Repository;
 using Svarozhich.Services;
@@ -67,6 +68,7 @@ public partial class App : Application
         services.AddSingleton<WorkspaceService>();
         services.AddSingleton<ProjectTemplatesService>();
         services.AddSingleton<UndoRedoService>();
+        services.AddSingleton<CommandsFactory>();
         services.AddSingleton<TrashFolderService>();
 
         services.AddSingleton<ProjectRepository>();

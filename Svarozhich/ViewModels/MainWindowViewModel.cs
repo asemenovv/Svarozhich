@@ -10,6 +10,7 @@ namespace Svarozhich.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private readonly CommandsFactory _commandsFactory;
     public WorkspaceService WorkspaceService { get; private set; }
     public FilesExplorerViewModel FilesExplorerViewModel { get; private set; }
     public SceneBrowserViewModel SceneBrowserViewModel { get; private set; }
@@ -24,8 +25,10 @@ public class MainWindowViewModel : ViewModelBase
     public NodeEditorViewModel NodeEditorViewModel { get; }
 
     public MainWindowViewModel(NodeEditorViewModel nodeEditorViewModel, FilesExplorerViewModel filesExplorerViewModel,
-        SceneBrowserViewModel sceneBrowserViewModel, UndoRedoService undoRedoService, WorkspaceService workspaceService)
+        SceneBrowserViewModel sceneBrowserViewModel, UndoRedoService undoRedoService, WorkspaceService workspaceService,
+        CommandsFactory commandsFactory)
     {
+        _commandsFactory = commandsFactory;
         WorkspaceService = workspaceService;
         FilesExplorerViewModel = filesExplorerViewModel;
         SceneBrowserViewModel = sceneBrowserViewModel;
@@ -45,9 +48,6 @@ public class MainWindowViewModel : ViewModelBase
 
     public void RenameProject(string newName)
     {
-        if (WorkspaceService.CurrentProject is null) return;
-
-        var op = new RenameProjectOperation(WorkspaceService.CurrentProject, newName);
-        UndoRedo.Do(op);
+        _commandsFactory.RenameCurrentProject(newName);
     }
 }

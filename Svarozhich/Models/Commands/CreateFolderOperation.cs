@@ -10,14 +10,17 @@ public class CreateFolderOperation(ProjectFileNode parentNode, string name, File
 
     public void Do()
     {
-        filesystem.CreateFolder(false, parentNode.FullPath, name);
-        _newFolderNode = parentNode.CreateChildFolder(name);
+        var result = filesystem.CreateFolder(false, parentNode.FullPath, name);
+        if (result.IsCreated)
+        {
+            _newFolderNode = parentNode.CreateChildFolder(name);
+        }
     }
 
     public void Undo()
     {
         if (_newFolderNode == null)  return;
-        filesystem.DeleteFolder(_newFolderNode.FullPath);
+        filesystem.Delete(_newFolderNode.FullPath);
         _newFolderNode.Delete();
         _newFolderNode = null;
     }

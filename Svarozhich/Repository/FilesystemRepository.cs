@@ -38,13 +38,22 @@ public class FilesystemRepository
 
     public void Copy(string srcPath, string destPath)
     {
-        File.Copy(srcPath, destPath);
+        if (File.Exists(srcPath))
+        {
+            File.Copy(srcPath, destPath);
+        }
     }
 
     public void Move(string srcPath, string destPath)
     {
-        if (!Directory.Exists(srcPath)) return;
-        Directory.Move(srcPath, destPath);
+        if (Directory.Exists(srcPath))
+        {
+            Directory.Move(srcPath, destPath);
+        }
+        if (File.Exists(srcPath))
+        {
+            File.Move(srcPath, destPath);
+        }
     }
 
     public List<string> EnumerateDirectories(string path, bool includeHidden = false)
@@ -68,14 +77,21 @@ public class FilesystemRepository
         return Directory.GetFiles(path, $"*{extension}", SearchOption.TopDirectoryOnly).ToList();
     }
 
+    public void Delete(string fullPath)
+    {
+        if (Directory.Exists(fullPath))
+        {
+            Directory.Delete(fullPath, true);
+        }
+        if (File.Exists(fullPath))
+        {
+            File.Delete(fullPath);
+        }
+    }
+
     private bool IsHidden(string path)
     {
         var directoryInfo = new DirectoryInfo(path);
         return directoryInfo.Attributes.HasFlag(FileAttributes.Hidden);
-    }
-
-    public void DeleteFolder(string fullPath)
-    {
-        Directory.Delete(fullPath, true);
     }
 }

@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Svarozhich.Models;
+using Svarozhich.Models.DTO;
+using Svarozhich.Models.ECS;
 using Svarozhich.Models.Project;
 using Svarozhich.Services;
 using Svarozhich.Utils;
+using SceneDto = Svarozhich.Models.DTO.SceneDto;
+using SceneRefDto = Svarozhich.Models.DTO.SceneRefDto;
 
 namespace Svarozhich.Repository;
 
 public class ProjectRepository
 {
-    private readonly ISerializer<ProjectBinding> _serializer;
+    private readonly ISerializer<ProjectDto> _serializer;
     private readonly ProjectLayout _layout;
 
-    public ProjectRepository(ISerializer<ProjectBinding> serializer, ProjectLayout layout)
+    public ProjectRepository(ISerializer<ProjectDto> serializer, ProjectLayout layout)
     {
         _serializer = serializer;
         _layout = layout;
@@ -31,20 +35,35 @@ public class ProjectRepository
                 throw new ArgumentException($"Folder {rootFolder} contains more than one project file.");
         }
 
-        var projectBinding = _serializer.FromFile(projectFiles[0]);
-        if (projectBinding == null)
+        var projectBinding = _serializer.FromFile(projectFiles[0])
+            ?? throw new InvalidOperationException($"Project {projectFiles[0]} can not be loaded.");
+        var project = new Project(projectBinding.Name, rootFolder);
+        foreach (var s in projectBinding.Scenes)
         {
-            throw new InvalidOperationException($"Project {projectFiles[0]} can not be loaded.");
+            project.AddScene(new SceneRef(
+                new SceneId(Guid.Parse(s.Id)),
+                s.Name,
+                s.Path
+            ));
         }
-        var project = new Project(projectBinding.Name);
         project.MarkClean();
         return project;
     }
 
     public void Save(string projectFolder, Project project)
     {
-        var projectBinding = new ProjectBinding { Name = project.Name };
-        var projectFile = _layout.ProjectFilePath(projectFolder, projectBinding.Name);
+        var projectFile = _layout.ProjectFilePath(projectFolder, project.Name);
+        var projectBinding = new ProjectDto
+        {
+            Name = project.Name,
+            Scenes = project.Scenes
+                .Select(s => new SceneRefDto()
+                {
+                    Id = s.Id.Value.ToString("D"),
+                    Name = s.Name,
+                    Path = s.RelativePath
+                }).ToList()
+        };
         _serializer.ToFile(projectBinding, projectFile);
     }
 

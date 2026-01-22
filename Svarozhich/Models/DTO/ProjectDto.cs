@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Svarozhich.ViewModels;
 
-namespace Svarozhich.Models;
+namespace Svarozhich.Models.DTO;
 
 [DataContract(Name = "Project")]
-public class ProjectBinding
+public class ProjectDto
 {
     [DataMember(Order = 1)]
     public required string Name { get; set; }
+    [DataMember(Order = 2)]
+    public List<SceneRefDto> Scenes { get; set; } = [];
 }

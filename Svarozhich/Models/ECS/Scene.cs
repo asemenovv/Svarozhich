@@ -1,20 +1,25 @@
 using System;
-using Svarozhich.Models.ECS;
 
-namespace Svarozhich.Models;
+namespace Svarozhich.Models.ECS;
+
+public readonly record struct SceneId(Guid Value)
+{
+    public static SceneId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString("N");
+}
+
+public sealed record SceneRef(SceneId Id, string Name, string RelativePath);
 
 public class Scene : PersistedEntity<SceneDto>
 {
+    public SceneId Id { get; }
+    public string Name { get; private set; }
     public Entity Root { get; }
-    
-    private const string Extension = ".xml";
-    private readonly Project.Project? _project;
-    private readonly string _projectLocalFolder;
 
-    internal Scene(Project.Project? project, string name, string projectLocalFolder = "Scenes/")
+    public Scene(SceneId id, string name)
     {
-        _project = project;// ?? throw new System.ArgumentNullException(nameof(project));
-        _projectLocalFolder = projectLocalFolder.Trim() ?? throw new System.ArgumentNullException(nameof(projectLocalFolder));
+        Id = id;
+        Name = name;
         Root = new Entity(EntityKind.Folder, name);
         MarkDirty();
     }

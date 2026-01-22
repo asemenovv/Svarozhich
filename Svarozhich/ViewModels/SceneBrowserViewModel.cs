@@ -1,5 +1,6 @@
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
+using Svarozhich.Models.ECS;
 using Svarozhich.Services;
 
 namespace Svarozhich.ViewModels;

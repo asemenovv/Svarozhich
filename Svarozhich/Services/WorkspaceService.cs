@@ -1,6 +1,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Svarozhich.Models;
+using Svarozhich.Models.ECS;
 using Svarozhich.Models.Project;
 
 namespace Svarozhich.Services;
@@ -11,6 +12,8 @@ public class WorkspaceService(ProjectTreeBuilder treeBuilder) : ReactiveObject
     public Project? CurrentProject { get; private set; }
     [Reactive]
     public ProjectFileNode? ProjectTreeRoot { get; private set; }
+    [Reactive]
+    public Scene? ActiveScene { get; private set; }
     
     public void OpenProject(Project project, ProjectFileNode projectFileNode)
     {
@@ -23,6 +26,8 @@ public class WorkspaceService(ProjectTreeBuilder treeBuilder) : ReactiveObject
         CurrentProject = null;
         ProjectTreeRoot = null;
     }
+    
+    public void SetActiveScene(Scene? scene) => ActiveScene = scene;
 
     public void Refresh()
     {

@@ -18,7 +18,7 @@ public class ProjectsAppService(
         var folderResult = filesystemRepository.CreateFolder(false, projectsPath, name);
         templatesService.ApplyTemplate(template, folderResult.FullPath);
         var project = new Project(name);
-        project.CreateScene("Default Scene");
+        project.AddScene("Default Scene");
         repository.Save(folderResult.FullPath, project);
         var filesTree = treeBuilder.Build(folderResult.FullPath);
         workspace.OpenProject(project, filesTree);

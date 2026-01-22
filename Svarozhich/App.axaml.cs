@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Svarozhich.Models;
 using Svarozhich.Models.Commands;
+using Svarozhich.Models.DTO;
 using Svarozhich.Models.Project;
 using Svarozhich.Repository;
 using Svarozhich.Services;
@@ -72,13 +73,14 @@ public partial class App : Application
         services.AddSingleton<TrashFolderService>();
 
         services.AddSingleton<ProjectRepository>();
+        services.AddSingleton<SceneRepository>();
         services.AddSingleton<FilesystemRepository>();
         services.AddSingleton<ProjectTreeBuilder>();
         services.AddSingleton<ProjectLayout>();
         services.AddSingleton<ProjectTemplateLayout>();
         services.AddSingleton<InstallationFolderLayout>();
         
-        services.AddSingleton<ISerializer<ProjectBinding>>(new XmlSerializer<ProjectBinding>());
+        services.AddSingleton<ISerializer<ProjectDto>>(new XmlSerializer<ProjectDto>());
         services.AddSingleton<ISerializer<ProjectTemplate>>(new XmlSerializer<ProjectTemplate>());
         services.AddSingleton<ISerializer<OpenedProjectData>>(new XmlSerializer<OpenedProjectData>());
         

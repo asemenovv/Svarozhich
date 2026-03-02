@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET: Launch (Debug)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": ".NET: build (solution)",
+      "program": "${workspaceFolder}\\Svarozhich\\bin\\Debug\\net9.0\\Svarozhich.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}\\Svarozhich",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    },
+    {
+      "name": ".NET: Launch (Release)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": ".NET: build (Release)",
+      "program": "${workspaceFolder}\\Svarozhich\\bin\\Release\\net9.0\\Svarozhich.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}\\Svarozhich",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    },
+    {
+      "name": ".NET: Attach to Process",
+      "type": "coreclr",
+      "request": "attach"
+    }
+  ]
+}

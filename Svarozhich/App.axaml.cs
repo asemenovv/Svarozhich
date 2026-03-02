@@ -74,6 +74,7 @@ public partial class App : Application
 
         services.AddSingleton<ProjectRepository>();
         services.AddSingleton<SceneRepository>();
+        services.AddSingleton<SceneService>();
         services.AddSingleton<FilesystemRepository>();
         services.AddSingleton<ProjectTreeBuilder>();
         services.AddSingleton<ProjectLayout>();
@@ -82,6 +83,7 @@ public partial class App : Application
         
         services.AddSingleton<ISerializer<ProjectDto>>(new XmlSerializer<ProjectDto>());
         services.AddSingleton<ISerializer<ProjectTemplate>>(new XmlSerializer<ProjectTemplate>());
+        services.AddSingleton<ISerializer<SceneDto>>(new XmlSerializer<SceneDto>());
         services.AddSingleton<ISerializer<OpenedProjectData>>(new XmlSerializer<OpenedProjectData>());
         
         services.AddMediatR(cfg => 

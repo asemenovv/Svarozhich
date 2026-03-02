@@ -1,4 +1,5 @@
 using System;
+using Svarozhich.Models.DTO;
 
 namespace Svarozhich.Models.ECS;
 

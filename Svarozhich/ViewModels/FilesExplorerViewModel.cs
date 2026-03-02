@@ -120,7 +120,11 @@ public class FilesExplorerViewModel : ViewModelBase
 
     private async Task CreateSceneInSelectedNode()
     {
-        if (SelectedNode == null) return;
+        var context = SelectedNode ?? WorkspaceService.ProjectTreeRoot;
+        if (context == null) return;
+        var response = await FolderNameDialogInteraction.Handle(context);
+        if (string.IsNullOrWhiteSpace(response?.Text)) return;
+        _commandsFactory.CreateScene(response.Text);
     }
     
     private async Task RenameSelectedNode()

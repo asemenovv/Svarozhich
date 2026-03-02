@@ -11,17 +11,18 @@ public class ProjectsAppService(
     RecentProjectsService recentsService,
     WorkspaceService workspace,
     ProjectTemplatesService templatesService,
-    FilesystemRepository filesystemRepository)
+    FilesystemRepository filesystemRepository,
+    SceneService sceneService)
 {
     public ProjectFileNode CreateProjectFromTemplate(string name, string projectsPath, ProjectTemplate template)
     {
         var folderResult = filesystemRepository.CreateFolder(false, projectsPath, name);
         templatesService.ApplyTemplate(template, folderResult.FullPath);
-        var project = new Project(name);
-        project.AddScene("Default Scene");
+        var project = new Project(name, folderResult.FullPath);
         repository.Save(folderResult.FullPath, project);
         var filesTree = treeBuilder.Build(folderResult.FullPath);
         workspace.OpenProject(project, filesTree);
+        sceneService.CreateScene(project, "Default Scene");
         recentsService.MarkOpened(project, filesTree);
         return filesTree;
     }

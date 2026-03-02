@@ -5,7 +5,7 @@ using Svarozhich.Services;
 namespace Svarozhich.Models.Commands;
 
 public class CommandsFactory(FilesystemRepository filesystem, UndoRedoService undoRedoService,
-    TrashFolderService trashFolderService, WorkspaceService workspaceService)
+    TrashFolderService trashFolderService, WorkspaceService workspaceService, SceneService sceneService)
 {
     public IUndoableOperation CreateFolder(ProjectFileNode parentFolder, string name)
     {
@@ -29,6 +29,15 @@ public class CommandsFactory(FilesystemRepository filesystem, UndoRedoService un
         if (workspaceService.CurrentProject is null) return new NopOperation();
 
         var operation = new RenameProjectOperation(workspaceService.CurrentProject, newName);
+        undoRedoService.Do(operation);
+        return operation;
+    }
+
+    public IUndoableOperation CreateScene(string sceneName)
+    {
+        if (workspaceService.CurrentProject is null) return new NopOperation();
+
+        var operation = new CreateSceneOperation(sceneName, workspaceService.CurrentProject, sceneService);
         undoRedoService.Do(operation);
         return operation;
     }

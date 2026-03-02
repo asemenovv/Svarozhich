@@ -1,0 +1,14 @@
+{
+  "actions": [
+    {
+      "text": "$(tools) Build",
+      "command": "dotnet build Svarozhich.sln -c Debug",
+      "tooltip": "Build solution (Debug)"
+    },
+    {
+      "text": "$(play) Run",
+      "command": "dotnet run --project Svarozhich/Svarozhich.csproj -c Debug",
+      "tooltip": "Run Svarozhich (Debug)"
+    }
+  ]
+}

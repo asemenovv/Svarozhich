@@ -33,8 +33,11 @@ public partial class InputDialogView : Window
         
         var textInput = this.FindControl<TextBox>("InputBox");
         textInput!.Text = configs.DefaultValue;
-        textInput.Focus();
-        textInput.CaretIndex = textInput.Text?.Length ?? 0;
+        Opened += (_, _) =>
+        {
+            textInput.Focus();
+            textInput.SelectAll();
+        };
 
         var checkBox = this.FindControl<CheckBox>("InputCheckBox");
         checkBox.IsVisible = configs.ShowBooleanFlag;
@@ -60,7 +63,7 @@ public partial class InputDialogView : Window
         switch (e.Key)
         {
             case Key.Enter:
-                Close(this.FindControl<TextBox>("InputBox")!.Text);
+                OkClick(null, null!);
                 break;
             case Key.Escape:
                 Close(null);

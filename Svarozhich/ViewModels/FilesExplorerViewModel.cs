@@ -20,6 +20,7 @@ public class FilesExplorerViewModel : ViewModelBase
     [Reactive] public ProjectFileNode? SelectedNode { get; set; }
     public Interaction<ProjectFileNode, bool> DeleteConfirmationInteraction { get; }
     public Interaction<ProjectFileNode, InputDialogResponse?> FolderNameDialogInteraction { get; }
+    public Interaction<Unit, InputDialogResponse?> SceneNameDialogInteraction { get; }
     
     public ReactiveCommand<Unit, Unit> OpenCommand { get; }
     
@@ -41,6 +42,7 @@ public class FilesExplorerViewModel : ViewModelBase
         WorkspaceService = workspaceService;
         DeleteConfirmationInteraction = new Interaction<ProjectFileNode, bool>();
         FolderNameDialogInteraction = new Interaction<ProjectFileNode, InputDialogResponse?>();
+        SceneNameDialogInteraction = new Interaction<Unit, InputDialogResponse?>();
         OpenFolderInFinderCommand = ReactiveCommand.Create<ProjectFileNode>(OpenFolderInFinder);
         
         // var isNodeSelected = this.WhenAnyValue(x => x.SelectedNode)
@@ -120,9 +122,7 @@ public class FilesExplorerViewModel : ViewModelBase
 
     private async Task CreateSceneInSelectedNode()
     {
-        var context = SelectedNode ?? WorkspaceService.ProjectTreeRoot;
-        if (context == null) return;
-        var response = await FolderNameDialogInteraction.Handle(context);
+        var response = await SceneNameDialogInteraction.Handle(Unit.Default);
         if (string.IsNullOrWhiteSpace(response?.Text)) return;
         _commandsFactory.CreateScene(response.Text);
     }

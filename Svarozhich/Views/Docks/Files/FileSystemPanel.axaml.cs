@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Threading.Tasks;
@@ -66,12 +67,29 @@ public partial class FileSystemPanel : ReactiveUserControl<FilesExplorerViewMode
         context.SetOutput(confirmation == "Yes");
     }
 
+    private async Task AskForSceneNameHandler(IInteractionContext<Unit, InputDialogResponse?> context)
+    {
+        var window = TopLevel.GetTopLevel(this) as Window;
+        if (window == null)
+        {
+            context.SetOutput(null);
+            return;
+        }
+
+        var configs = new InputDialogConfigs("New Scene", "Scene name:", "New Scene");
+        var inputDialogView = new InputDialogView(configs);
+        var dialogResponse = await inputDialogView.ShowDialog<InputDialogResponse?>(window);
+        context.SetOutput(dialogResponse);
+    }
+
     private void OnViewActivation(CompositeDisposable disposables)
     {
         var vm = (FilesExplorerViewModel)DataContext!;
         vm.DeleteConfirmationInteraction.RegisterHandler(DeleteConfirmationHandler)
             .DisposeWith(disposables);
         vm.FolderNameDialogInteraction.RegisterHandler(AskForFolderNameHandler)
+            .DisposeWith(disposables);
+        vm.SceneNameDialogInteraction.RegisterHandler(AskForSceneNameHandler)
             .DisposeWith(disposables);
     }
 }
